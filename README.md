@@ -1,6 +1,8 @@
 # Sonilo for Codex
 
-Generate licensed music, sound effects, and newly mixed videos from text or publicly reachable HTTPS video URLs in Codex.
+Generate commercially licensed music, sound effects, and newly mixed videos
+from text or video, directly in Codex — powered by Sonilo's hosted
+generation service.
 
 > Status: publication development. The plugin is installable locally, but it
 > is not yet listed in the public Plugins Directory.
@@ -8,7 +10,7 @@ Generate licensed music, sound effects, and newly mixed videos from text or publ
 ## Requirements
 
 - A **Sonilo Platform** account at
-  [platform.sonilo.com](https://platform.sonilo.com) — this is the
+  [platform.sonilo.com](https://platform.sonilo.com/sign-up) — this is the
   developer/API account you sign in with during authorization. It is separate
   from a consumer `sonilo.com` account; if you only have the latter, create a
   Platform account first.
@@ -31,10 +33,9 @@ codex plugin add sonilo@sonilo
 
 The first time Codex calls a Sonilo tool, it opens your browser to sign in to
 your [Sonilo Platform](https://platform.sonilo.com) account and approve access
-(authorize → consent → callback). Codex stores the resulting OAuth token
-locally per user, limited to the `profile` scope; the plugin itself ships no
-key, secret, or token. Run `codex mcp login sonilo` to (re)authorize, for
-example after switching accounts or clearing local state.
+(authorize → consent → callback). Codex stores the resulting token locally per
+user; the plugin itself ships no key, secret, or token. Run
+`codex mcp login sonilo` anytime to review or refresh the connection.
 
 ## Capabilities
 
@@ -59,11 +60,10 @@ details and limits.
 
 Generation tools (`text_to_music`, `text_to_sfx`, `video_to_music`,
 `video_to_sfx`, `video_to_video_music`, `video_to_video_sfx`, `audio_ducking`)
-are **paid** and consume credits already available in your Sonilo Platform
-account. Account and usage tools (`get_account_services`, `get_usage`,
-`get_generation_task`) are read-only and never incur a charge. Paid tools run
-only after you explicitly ask for them, and the plugin never directs you to
-pricing, checkout, or credit-purchase pages.
+are **paid** and run against your Sonilo Platform account. Account and usage
+tools (`get_account_services`, `get_usage`, `get_generation_task`) are
+read-only and never incur a charge. Paid tools run only after you explicitly
+ask for them.
 
 ## What this plugin connects to
 
@@ -71,8 +71,8 @@ This plugin adds a single **remote MCP server** and connects only to Sonilo's
 hosted endpoint:
 
 - **Endpoint:** `https://api.sonilo.com/mcp` (HTTPS, Streamable HTTP MCP)
-- **Authorization:** OAuth against Sonilo Platform's identity provider,
-  limited to the `profile` scope — no pre-shared client secret
+- **Authorization server:** Sonilo's Clerk instance (OAuth 2.1 + PKCE; the
+  plugin registers dynamically — no pre-shared client secret)
 - **Data sent:** your prompts and any media URLs you provide to a tool
 - **Data stored:** the OAuth token, kept locally per user by Codex
 
@@ -82,7 +82,7 @@ No local command or binary is executed by this plugin.
 
 - Platform / account: [platform.sonilo.com](https://platform.sonilo.com)
 - Website: [sonilo.com](https://sonilo.com)
-- Contact: support@sonilo.com
+- Contact: info@sonilo.com
 
 ## Release verification
 
