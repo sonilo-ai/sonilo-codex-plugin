@@ -1,0 +1,20 @@
+{
+  "name": "sonilo",
+  "interface": {
+    "displayName": "Sonilo"
+  },
+  "plugins": [
+    {
+      "name": "sonilo",
+      "source": {
+        "source": "local",
+        "path": "./plugins/sonilo"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Creativity"
+    }
+  ]
+}

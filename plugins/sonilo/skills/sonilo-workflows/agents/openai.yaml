@@ -1,0 +1,12 @@
+interface:
+  display_name: "Sonilo Workflows"
+  short_description: "Generate Sonilo audio and mixed video safely"
+  default_prompt: "Use $sonilo-workflows with my Sonilo Platform account to create audio or a newly mixed video and return the completed result."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "sonilo"
+      description: "Sonilo Platform music, sound-effects, and mixed-video MCP server"
+      transport: "streamable_http"
+      url: "https://api.sonilo.com/mcp"

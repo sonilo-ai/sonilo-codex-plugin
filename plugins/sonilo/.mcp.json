@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sonilo": {
+      "type": "http",
+      "url": "https://api.sonilo.com/mcp",
+      "scopes": [
+        "profile"
+      ]
+    }
+  }
+}
