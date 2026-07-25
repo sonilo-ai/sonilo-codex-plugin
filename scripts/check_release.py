@@ -153,8 +153,8 @@ def check_local() -> None:
 
     require(manifest.get("name") == "sonilo", "manifest name must be sonilo")
     require(
-        re.fullmatch(r"0\.3\.0\+codex\.\d+", manifest.get("version", "")) is not None,
-        "manifest version must use the 0.3.0 Codex cachebuster format",
+        re.fullmatch(r"\d+\.\d+\.\d+", manifest.get("version", "")) is not None,
+        "manifest version must be a plain semver string",
     )
     require(manifest.get("skills") == "./skills/", "manifest must reference bundled skills")
     require(manifest.get("mcpServers") == "./.mcp.json", "manifest must reference .mcp.json")
