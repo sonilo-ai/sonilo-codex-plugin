@@ -10,7 +10,7 @@ generation service.
 ## Requirements
 
 - A **Sonilo Platform** account at
-  [platform.sonilo.com](https://platform.sonilo.com/sign-up) — this is the
+  [platform.sonilo.com](https://platform.sonilo.com/sign-up?utm_source=codex_plugin&utm_medium=readme&utm_campaign=mcp_quickstart) — this is the
   developer/API account you sign in with during authorization. It is separate
   from a consumer `sonilo.com` account; if you only have the latter, create a
   Platform account first.
@@ -32,7 +32,7 @@ codex plugin add sonilo@sonilo
 ## Authorize
 
 The first time Codex calls a Sonilo tool, it opens your browser to sign in to
-your [Sonilo Platform](https://platform.sonilo.com) account and approve access
+your [Sonilo Platform](https://platform.sonilo.com?utm_source=codex_plugin&utm_medium=readme&utm_campaign=mcp_quickstart) account and approve access
 (authorize → consent → callback). Codex stores the resulting token locally per
 user; the plugin itself ships no key, secret, or token. Run
 `codex mcp login sonilo` anytime to review or refresh the connection.
