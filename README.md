@@ -4,8 +4,8 @@ Generate commercially licensed music, sound effects, and newly mixed videos
 from text or video, directly in Codex — powered by Sonilo's hosted
 generation service.
 
-> Status: publication development. The plugin is installable locally, but it
-> is not yet listed in the public Plugins Directory.
+> Status: published. Sonilo 1.0.0 is available in the public
+> [Plugins Directory](https://chatgpt.com/plugins/plugin_asdk_app_6a56e50ff2788191a96c7c8cd84bb6c2).
 
 ## Requirements
 
@@ -21,7 +21,13 @@ sign in with your Sonilo Platform account, no key to copy or paste.
 
 ## Install
 
-Clone this repository, add it as a Codex plugin marketplace, then install `sonilo`.
+Open [Sonilo in the Plugins Directory](https://chatgpt.com/plugins/plugin_asdk_app_6a56e50ff2788191a96c7c8cd84bb6c2)
+to install the published plugin and connect your Sonilo Platform account.
+
+### Local development installation
+
+To install from this repository, clone it, add it as a Codex plugin marketplace,
+then install `sonilo`.
 
 ```bash
 git clone https://github.com/sonilo-ai/sonilo-codex-plugin.git
