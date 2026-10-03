@@ -1,4 +1,4 @@
-# v1.1.0 live verification — October 2, 2026 (Pacific)
+# v1.1.0 verification — October 2–3, 2026 (Pacific)
 
 **Release status: hosted MCP fix awaits deployment and live retest.**
 
@@ -73,9 +73,10 @@ displayed the consent page. Do not interpret that stale page alone as a failed
 connection or click Allow repeatedly. This does not establish the cause of
 every user's consent-page loading problem.
 
-The plugin manifest remains `profile` only. This temporary client's success
-therefore does not establish the exact Codex client's sign-in/refresh behavior;
-a clean plugin OAuth check is still required before release.
+The plugin manifest remains `profile` only. The temporary Python client's
+success alone did not establish Codex's authentication behavior. The separate
+native Codex check below now covers initial sign-in and credential reuse, but
+not token-expiry refresh or the complete installed-plugin conversation.
 
 ## Usage reconciliation
 
@@ -120,6 +121,29 @@ task and one USD 0.1000 debit, leaving USD 1.1345. The combined OAuth integratio
 and JSON-dispatch suite passes all 45 cases. This verifies the backend contract,
 not the plugin's natural-language reply, guide-link choice, or autonomous tool
 selection; those still require the clean Codex test.
+
+## Local installation and native Codex OAuth
+
+The installed local marketplace still pointed at an older working directory
+and reported version `0.3.0+codex.20260909195632`. Using the supported Codex CLI,
+the Sonilo marketplace source was updated to the current release repository
+and `sonilo@sonilo` was installed as **1.1.0**. All nine installed files match
+the package source byte-for-byte. Codex's plugin reader reports it installed,
+enabled, and containing the current `sonilo:sonilo-workflows` skill.
+
+A separate Codex app-server diagnostic process used a process-only MCP entry
+with the same production URL and configured `profile` scope. Codex itself
+included `offline_access` in the authorization request. Its OAuth completion
+notification returned `success: true`. After restarting the diagnostic
+process, saved authentication still worked: `authStatus: oAuth`, no tool error,
+and all 15 hosted tools, including `get_generation_task`, were returned.
+The consent page remained visible even after successful authentication.
+
+This test used Codex's own client rather than the Python SDK. It did not start
+an agent turn or alter the plugin's scopes. It does not prove expired-token
+refresh or the skill's behavior in a fresh conversation. The user's separate
+`sonilo` stdio MCP entry is also still registered, so conversation tests must
+verify they use the hosted tool inventory rather than its local Python tools.
 
 Still needed: deploy the hosted fix, live dubbing/approved-script/timed-effect
 retests, the remaining scenarios above, a clean v1.1.0 Codex conversation test,
