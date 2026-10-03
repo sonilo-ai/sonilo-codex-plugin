@@ -22,8 +22,8 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | Free dubbing preview | Blocked: the documented `languages` string is rejected by argument validation before task creation. The account still has its preview allowance. |
 | Full video after preview | Blocked by the same language-argument issue; no preview/full-video chain completed. |
 | Balance and trial lookup | Passed: actual decimal USD balance and per-service trial data returned through OAuth. |
-| Credit-error guidance | Guide routes were verified previously; an actual insufficient-balance rejection and Codex's reply are not yet tested. Do not exhaust the test wallet just to force this condition. |
-| Continue after account update | Not tested: no account-funding change was performed. |
+| Credit-error guidance | Guide routes passed. Isolated authenticated MCP tests cover exhausted trials and insufficient balance with real billing/ledger code: no task, usage record, debit, or generation dispatch occurs. Production rejection and Codex's reply remain untested. |
+| Continue after account update | Isolated authenticated MCP tests pass: a credit becomes visible on the same connection, reading balance does not retry, and one explicit resubmission creates one task and debit with the original arguments. No production funding change was performed; Codex's conversation behavior remains untested. |
 | Usage examples | Bundled examples are present; selection and wording in a clean Codex session remain untested. |
 | Generation status | Passed: existing successful and failed tasks retrieved; repeat lookup returned the same task and media URLs. A nonexistent task returned `Task not found`. |
 | Multiple variants | Passed: one 10-second request with `variants_num=3` returned three distinct playable audio files. |
@@ -102,6 +102,24 @@ or a measurement of the music attenuation envelope.
 The current `sonilo-workflows-1.1.0.zip` was uploaded again. The portal changed
 from Scanning to **Passed**. Navigation away from and back to Skills retained
 the passed state. No review submission or publication was performed.
+
+## Isolated credit recovery verification
+
+Backend PR #393 includes two integration scenarios, for never-funded and
+previously funded accounts. They drive the actual MCP ASGI transport and SDK,
+OAuth verification with a locally signed test token, and real billing/ledger
+services against an isolated in-memory database and Redis. Only media
+generation dispatch and email notifications are stubbed. There is no change
+to a production wallet or billing behavior.
+
+Both zero-balance scenarios reject generation without creating a task, usage
+record, or ledger debit. A local USD 1.2345 credit is visible on the same
+authenticated connection. Reading that balance does not resume work. One
+explicit resubmission using the original prompt/duration creates exactly one
+task and one USD 0.1000 debit, leaving USD 1.1345. The combined OAuth integration
+and JSON-dispatch suite passes all 45 cases. This verifies the backend contract,
+not the plugin's natural-language reply, guide-link choice, or autonomous tool
+selection; those still require the clean Codex test.
 
 Still needed: deploy the hosted fix, live dubbing/approved-script/timed-effect
 retests, the remaining scenarios above, a clean v1.1.0 Codex conversation test,
