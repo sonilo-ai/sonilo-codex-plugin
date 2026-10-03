@@ -5,7 +5,7 @@
 > continuation, and timed-SFX generation now succeed. Clean Codex conversation
 > checks and updated review recording remain. The user accepted the listening page.
 > The bundled MCP now uses `sonilo_platform` to avoid the legacy local name.
-> A revised Skill upload is awaiting its new portal scan.
+> The revised Skill upload passed its new portal scan.
 > Production media results and isolated credit-recovery coverage are recorded
 > in [the live verification report](LIVE_TEST_1.1.0.md). Package coverage below
 > is not proof that every workflow has passed a clean Codex conversation test.

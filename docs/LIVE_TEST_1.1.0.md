@@ -272,6 +272,6 @@ USD and the actual exhausted music/dubbing trial counts;
 Spanish full dub with video and SRT. Both tool calls completed once, with no
 new generation or charge. This verifies the installed plugin in a restarted
 Codex runtime; the desktop process still requires a reload/restart and retest.
-Local release validation and `git diff --check` pass. The latest uploaded Skill
-was still scanning at the last portal observation; the earlier Passed badge
-must not be attributed to this revised ZIP.
+Local release validation and `git diff --check` pass. After the new upload
+completed, reloading the portal and returning to Skills showed **Passed** for
+the revised ZIP. This verifies its scanner result, not plugin review approval.
