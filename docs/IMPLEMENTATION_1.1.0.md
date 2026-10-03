@@ -3,8 +3,9 @@
 > October 3 verification update: **not release-ready**. Backend PRs #393 and
 > #398 are merged and deployed. Live dubbing preview, full approved-script
 > continuation, and timed-SFX generation now succeed. Clean Codex conversation
-> checks and listening verification, including exact SFX timing, remain.
-> The current Skill upload passed its portal scan.
+> checks and updated review recording remain. The user accepted the listening page.
+> The bundled MCP now uses `sonilo_platform` to avoid the legacy local name.
+> A revised Skill upload is awaiting its new portal scan.
 > Production media results and isolated credit-recovery coverage are recorded
 > in [the live verification report](LIVE_TEST_1.1.0.md). Package coverage below
 > is not proof that every workflow has passed a clean Codex conversation test.

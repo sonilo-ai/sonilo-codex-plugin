@@ -9,6 +9,13 @@ Use the connected hosted MCP schemas and returned data as the source of truth.
 This plugin does not install the local `sonilo-mcp` Python server. Do not assume
 a tool or parameter exists because it appears in that repository.
 
+For the bundled connection, use the `sonilo_platform` MCP server. If a legacy
+local `sonilo` server is also available, do not use it for this workflow or
+fall back to it after a hosted authentication error. Reconnect the hosted
+Sonilo Platform connection instead. Registered directory connections may
+use a different namespace; identify them by their hosted schemas, including
+`get_generation_task`, rather than assuming every Sonilo tool is equivalent.
+
 ## Account identity and availability
 
 - A Sonilo Platform account is required. OAuth connects the user to

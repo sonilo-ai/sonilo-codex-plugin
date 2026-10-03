@@ -222,8 +222,8 @@ or account mutation occurred. Native default-config diagnostics likewise find
 the installed plugin's declared `sonilo` MCP server, but runtime inventory shows
 the legacy stdio server only. Disabling that legacy server in a temporary
 process yields no hosted Sonilo tools; the user's actual settings are unchanged.
-The connection/runtime-loading cause remains unresolved; do not count this as
-a successful installed-plugin test or infer a hosted-backend regression.
+This first failure was not a successful installed-plugin test and did not
+establish a hosted-backend regression. See the follow-up below.
 
 ## Public sample-link cleanup
 
@@ -237,3 +237,41 @@ published. Do not delete the old sample while published prompts or review
 cases still reference it. A future one-click sample should be an intentionally
 public, rights-cleared asset on a stable examples URL, not a temporary reviewer
 fixture.
+
+
+## Hosted/local MCP name collision repair (October 3)
+
+A controlled package-only change from the MCP key `sonilo` to `sonilo_platform`
+resolves the connection collision in a fresh Codex app-server process, without
+changing the user's global stdio configuration or injecting a replacement MCP
+entry. Before the rename, the runtime exposed only the legacy local schemas.
+After reinstalling the renamed plugin, it identifies the production HTTPS
+origin and requests OAuth. Native OAuth completed successfully with the same
+account and scopes; inventory then reports `authStatus: oAuth`, no tool error,
+and all 15 hosted tools, including `get_generation_task`.
+
+The skill dependency and reconnect instructions now use `sonilo_platform`.
+Workflow guidance explicitly prevents falling back to the legacy local server.
+The release checker enforces the distinct server key and matching dependency.
+All nine installed files match the current package source. Both ZIPs were
+rebuilt, and the revised Skill ZIP was uploaded to the existing 1.1.0 draft.
+
+The running desktop app still exposes only legacy tools in both the existing
+and a newly created temporary test chat. Those chats correctly stop without
+calling the old server; they do not establish successful balance/task reads.
+A separate CLI attempt to resume the existing chat was rejected because the
+desktop app owns its active writer; no writer lock was removed. Do not count
+successful standalone discovery as proof that the desktop cache has refreshed.
+
+
+A fresh ephemeral Codex CLI conversation using the normal installed plugin
+(no MCP config override, no direct SDK/HTTP fallback) passed both reads:
+`mcp__sonilo_platform__get_account_services` returned cash balance `2.7287`
+USD and the actual exhausted music/dubbing trial counts;
+`mcp__sonilo_platform__get_generation_task` retrieved the existing successful
+Spanish full dub with video and SRT. Both tool calls completed once, with no
+new generation or charge. This verifies the installed plugin in a restarted
+Codex runtime; the desktop process still requires a reload/restart and retest.
+Local release validation and `git diff --check` pass. The latest uploaded Skill
+was still scanning at the last portal observation; the earlier Passed badge
+must not be attributed to this revised ZIP.

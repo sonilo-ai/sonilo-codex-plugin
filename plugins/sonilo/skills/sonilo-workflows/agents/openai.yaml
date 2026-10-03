@@ -6,7 +6,7 @@ interface:
 dependencies:
   tools:
     - type: "mcp"
-      value: "sonilo"
+      value: "sonilo_platform"
       description: "Sonilo Platform music, sound-effects, subtitles, and dubbing MCP server"
       transport: "streamable_http"
       url: "https://api.sonilo.com/mcp"

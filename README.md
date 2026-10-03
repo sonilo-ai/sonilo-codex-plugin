@@ -44,7 +44,11 @@ The first time Codex calls a Sonilo tool, it opens your browser to sign in to
 your [Sonilo Platform](https://platform.sonilo.com) account and approve access
 (authorize → consent → callback). Codex stores the resulting token locally per
 user; the plugin itself ships no key, secret, or token. Run
-`codex mcp login sonilo` anytime to review or refresh the connection.
+`codex mcp login sonilo_platform` anytime to review or refresh the connection.
+The bundled connection is named `sonilo_platform` so an existing local Python
+MCP named `sonilo` cannot override it. When upgrading a local installation,
+reinstall the plugin and reconnect this hosted server. If the desktop app still
+shows only the old tools, restart the app before starting a new conversation.
 
 ## Capabilities
 

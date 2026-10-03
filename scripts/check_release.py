@@ -170,7 +170,9 @@ def check_local() -> None:
     require(manifest.get("mcpServers") == "./.mcp.json", "manifest must reference .mcp.json")
     require(WORKFLOW_SKILL_PATH.is_file(), "bundled sonilo-workflows skill is missing")
     require(WORKFLOW_AGENT_PATH.is_file(), "bundled sonilo-workflows agent metadata is missing")
-    sonilo_mcp = mcp_config.get("mcpServers", {}).get("sonilo", {})
+    servers = mcp_config.get("mcpServers", {})
+    require(set(servers) == {"sonilo_platform"}, "hosted MCP must avoid the legacy local sonilo server name")
+    sonilo_mcp = servers["sonilo_platform"]
     require(sonilo_mcp.get("type") == "http", "MCP transport type must be http")
     require(sonilo_mcp.get("url") == MCP_URL, f"MCP URL must be {MCP_URL}")
     require(sonilo_mcp.get("scopes") == ["profile"], "MCP OAuth scope must be limited to profile")
@@ -303,7 +305,7 @@ def check_local() -> None:
     )
     require("Poll `get_generation_task`" in skill, "skill must document asynchronous polling")
     agent_metadata = WORKFLOW_AGENT_PATH.read_text(encoding="utf-8")
-    require('value: "sonilo"' in agent_metadata, "skill agent metadata must depend on Sonilo MCP")
+    require('value: "sonilo_platform"' in agent_metadata, "skill dependency must match the hosted MCP server name")
     require(f'url: "{MCP_URL}"' in agent_metadata, "skill agent metadata has the wrong MCP URL")
 
     entries = marketplace.get("plugins", [])

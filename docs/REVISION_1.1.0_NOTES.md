@@ -3,9 +3,9 @@
 > October 3 live-test update: **not release-ready**. Backend PRs #393 and #398
 > are merged and deployed; the latest full CI passed 3,130 tests (19 skipped).
 > Live dubbing preview, full approved-script continuation, and timed-SFX
-> generation succeed. Clean Codex conversation and listening checks, including
-> precise SFX timing, remain. The updated Skill upload passed the
-> portal scanner. Music variants, stems, combined output, subtitle generation,
+> generation succeed, and the user accepted the listening page. Clean Codex
+> conversation checks and a current recording remain. The latest connection
+> routing revision has been uploaded for a new Skill scan. Music variants, stems, combined output, subtitle generation,
 > speech-preserving output retrieval, balance, and task retrieval passed the
 > checks described in [the live verification report](LIVE_TEST_1.1.0.md).
 > Earlier preparation notes below do not supersede these findings.
