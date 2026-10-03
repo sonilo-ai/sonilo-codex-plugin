@@ -1,6 +1,6 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
-**Release status: JSON-array fix deployed; approved-subtitle dubbing uncovered a deployment configuration blocker.**
+**Release status: both hosted fixes deployed; full-video approved-subtitle flow passed. Conversation and listening checks remain.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
@@ -22,10 +22,10 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 
 | Feature | Observed result |
 | --- | --- |
-| Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. Approved-script dubbing reaches preflight but is blocked by a missing MCP container credential (see below). A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
+| Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. After PR #398, the same approved Spanish SRT passes preflight and produces a readable full 22-second video and aligned SRT; all six cues retain the approved text. A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
 | Music and effects together | Passed: one call produced a video, music track, and effects track. All three URLs were readable; video contains H.264 and AAC and is 20 seconds long. |
 | Free dubbing preview | Passed after deployment: explicit Spanish JSON-string language input started an eligible free preview. The result is a readable H.264/AAC video exactly 15 seconds long; returned metadata identifies the 22-second original, one language, and trimming. |
-| Full video after preview | Full original video plus approved Spanish subtitles was submitted after the preview. Preflight failed before task creation because the MCP container lacks its pipeline credential; full output is not yet verified. |
+| Full video after preview | Passed after PR #398: the 15-second preview was followed by a request using the original 22-second video and approved Spanish subtitles. Both delivered video and audio are 22 seconds; no preview metadata appears in the full result. |
 | Balance and trial lookup | Passed: actual decimal USD balance and per-service trial data returned through OAuth. |
 | Credit-error guidance | Guide routes passed. Isolated authenticated MCP tests cover exhausted trials and insufficient balance with real billing/ledger code: no task, usage record, debit, or generation dispatch occurs. Production rejection and Codex's reply remain untested. |
 | Continue after account update | Isolated authenticated MCP tests pass: a credit becomes visible on the same connection, reading balance does not retry, and one explicit resubmission creates one task and debit with the original arguments. No production funding change was performed; Codex's conversation behavior remains untested. |
@@ -66,7 +66,7 @@ validation errors for invalid arrays, rather than the old string/list error.
 Valid Spanish dubbing and timed video-SFX inputs now create successful tasks.
 Do not omit requested languages, which would select multiple defaults.
 
-## Approved-subtitle preflight configuration blocker
+## Approved-subtitle preflight configuration blocker resolved
 
 The full-video continuation used the original 22-second fixture and the
 reviewed Spanish SRT returned by proofread. It failed before task creation
@@ -82,7 +82,17 @@ returned generation task. Do not retry blindly or discard approved subtitles.
 [PR #398](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/398) adds
 the existing secret reference to MCP and a regression
 check covering both public and MCP preflight surfaces; the new check fails
-against the old configuration and passes with the mapping.
+against the old configuration and passes with the mapping. Its complete CI
+passed 3,130 tests (19 skipped), and it merged as `e3f08de0`.
+[Deployment run 37152729311](https://github.com/sonilo-ai/sonilo-api-dashboard/actions/runs/37152729311)
+succeeded. ECS revision 96 reached COMPLETED with one running task and no
+pending tasks; its image matches the merge commit and its secret mapping is
+present. The same approved Spanish SRT now passes preflight (six cues, no
+issues) and completes a full-video task. ffprobe confirms 22-second H.264
+video and 22-second AAC audio. All six aligned SRT cues preserve the approved
+text exactly. Subtitle export succeeded with one informational
+`zero_duration_characters` notice for one character in cue 1; every exported
+cue has a positive duration. This does not establish subjective voice quality.
 
 ## OAuth test-client incident
 
@@ -111,7 +121,11 @@ The subsequent spoken-fixture subtitle and speech-preserving music runs used
 one proofread trial and one video-to-music trial. The balance remained USD
 4.0084. The post-deployment dubbing preview and timed-video-SFX runs each used
 their remaining trial; both now report zero remaining and the balance is still
-USD 4.0084. No account funding or automatic paid retry was performed.
+USD 4.0084. The failed preflight also left that balance unchanged. After
+deploying the credential fix, one explicit full-video retest charged USD
+1.2797, leaving USD 2.7287. Usage reports eight requests and USD 1.3472 total
+spending, matching the original balance minus current balance. No production
+account funding was changed or ambiguous request blindly resubmitted.
 
 ## Spoken fixture and portal scan
 
@@ -180,6 +194,7 @@ refresh or the skill's behavior in a fresh conversation. The user's separate
 `sonilo` stdio MCP entry is also still registered, so conversation tests must
 verify they use the hosted tool inventory rather than its local Python tools.
 
-Still needed: full-video and approved-script dubbing tests, the remaining
-scenarios above, a clean v1.1.0 Codex conversation test, audio/timed-effect
-listening verification, and current demo material.
+Still needed: the remaining conversation scenarios above, a clean v1.1.0
+Codex conversation test, audio/timed-effect listening verification, and current
+demo material. The fresh-conversation test awaits explicit authorization to
+create a temporary Codex task; it will use read-only queries and existing media.
