@@ -1,8 +1,9 @@
 # Revision 1.1.0 draft notes
 
-> October 2 live-test update: **not release-ready**. Backend PR #393 fixes the
-> production dubbing-language and timed-SFX argument failures; CI passed, but
-> deployment and live retests remain. The updated Skill upload passed the
+> October 3 live-test update: **not release-ready**. Backend PR #393 is merged
+> and deployed after 255 relevant tests and CI passed. Live dubbing preview
+> and timed-SFX generation now succeed; full/script continuation and precise
+> SFX timing still need verification. The updated Skill upload passed the
 > portal scanner. Music variants, stems, combined output, subtitle generation,
 > speech-preserving output retrieval, balance, and task retrieval passed the
 > checks described in [the live verification report](LIVE_TEST_1.1.0.md).

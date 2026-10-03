@@ -1,8 +1,9 @@
 # Sonilo 1.1.0 implementation
 
-> October 2 verification update: **not release-ready**. Backend PR #393 fixes
-> production dubbing-language and timed-SFX argument failures; deployment and
-> live retests remain. The current Skill upload passed its portal scan.
+> October 3 verification update: **not release-ready**. Backend PR #393 is
+> merged and deployed. Live dubbing preview and timed-SFX generation now
+> succeed; full-video/script continuation and exact SFX timing still need
+> verification. The current Skill upload passed its portal scan.
 > Production media results and isolated credit-recovery coverage are recorded
 > in [the live verification report](LIVE_TEST_1.1.0.md). Package coverage below
 > is not proof that every workflow has passed a clean Codex conversation test.

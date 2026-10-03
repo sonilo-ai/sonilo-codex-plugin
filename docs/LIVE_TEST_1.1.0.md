@@ -1,13 +1,15 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
-**Release status: hosted MCP fix awaits deployment and live retest.**
+**Release status: hosted fix deployed; remaining workflow and conversation checks.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
-their published schemas. CI passed on the initial fix and added credit tests.
-After synchronizing the October 3 `develop` updates, all 255 relevant local
-tests passed; CI for that synchronized commit must also pass before merge.
-The updated plugin Skill upload also
+their published schemas. After synchronizing the October 3 `develop` updates,
+all 255 relevant local tests and the synchronized commit's CI passed. The PR
+was merged as `946115c3` and deployed in
+[production run 37143426954](https://github.com/sonilo-ai/sonilo-api-dashboard/actions/runs/37143426954).
+ECS revision 95 reached COMPLETED with one running task and no pending tasks;
+its image tag matches the merge commit. The updated plugin Skill upload also
 passed the portal scanner; this is not approval or publication of the plugin.
 
 These are authenticated production MCP calls using a temporary Python MCP
@@ -22,8 +24,8 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | --- | --- |
 | Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. Approved-script dubbing still awaits the hosted fix. A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
 | Music and effects together | Passed: one call produced a video, music track, and effects track. All three URLs were readable; video contains H.264 and AAC and is 20 seconds long. |
-| Free dubbing preview | Blocked: the documented `languages` string is rejected by argument validation before task creation. The account still has its preview allowance. |
-| Full video after preview | Blocked by the same language-argument issue; no preview/full-video chain completed. |
+| Free dubbing preview | Passed after deployment: explicit Spanish JSON-string language input started an eligible free preview. The result is a readable H.264/AAC video exactly 15 seconds long; returned metadata identifies the 22-second original, one language, and trimming. |
+| Full video after preview | Language validation is fixed; the full-video/approved-script continuation remains untested. |
 | Balance and trial lookup | Passed: actual decimal USD balance and per-service trial data returned through OAuth. |
 | Credit-error guidance | Guide routes passed. Isolated authenticated MCP tests cover exhausted trials and insufficient balance with real billing/ledger code: no task, usage record, debit, or generation dispatch occurs. Production rejection and Codex's reply remain untested. |
 | Continue after account update | Isolated authenticated MCP tests pass: a credit becomes visible on the same connection, reading balance does not retry, and one explicit resubmission creates one task and debit with the original arguments. No production funding change was performed; Codex's conversation behavior remains untested. |
@@ -31,13 +33,13 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | Generation status | Passed: existing successful and failed tasks retrieved; repeat lookup returned the same task and media URLs. A nonexistent task returned `Task not found`. |
 | Multiple variants | Passed: one 10-second request with `variants_num=3` returned three distinct playable audio files. |
 | Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Listening quality and actual attenuation still need verification. |
-| Timed sound effects | Blocked: the documented `segments` JSON string is rejected before task creation. |
+| Timed sound effects | After deployment, the documented segments string is accepted and generation succeeds with a readable 22-second H.264/AAC video. Precise event timing and sound identity still need listening verification; successful transport and output duration do not prove those. |
 | Instrument stems | Passed: all three variants returned drums, bass, vocals, and other tracks; all 12 stem URLs were readable. |
 
 Media verification used ffprobe for actual file readability, codecs, and duration.
 It does not establish subjective audio quality or speech intelligibility.
 
-## Confirmed hosted blocker
+## Hosted blocker reproduced and resolved
 
 Both calls use the types advertised by production `tools/list`:
 
@@ -58,9 +60,11 @@ this preprocessing, so earlier function-level checks missed it.
 PR #393 restores pre-parsed arrays to JSON strings before the argument model
 validates them. It covers dubbing and the five exposed segment fields. Actual
 FastMCP-dispatch regression tests reproduced 13 failures before the fix and
-passed all 32 cases afterward. A broader 253-test MCP/segment/OAuth suite passed.
-Merge/deployment and live retests are still required. Do not work around the
-failure by omitting requested languages, which would select multiple defaults.
+passed all 32 cases afterward. The latest broader MCP/segment/OAuth suite
+passed 255 cases. After deployment, all six tools return their expected domain
+validation errors for invalid arrays, rather than the old string/list error.
+Valid Spanish dubbing and timed video-SFX inputs now create successful tasks.
+Do not omit requested languages, which would select multiple defaults.
 
 ## OAuth test-client incident
 
@@ -87,8 +91,9 @@ The initial run recorded three generation requests, including the no-speech
 failure, and USD 0.0675 spending. The wallet decreased by that same amount.
 The subsequent spoken-fixture subtitle and speech-preserving music runs used
 one proofread trial and one video-to-music trial. The balance remained USD
-4.0084. Dubbing and timed-video-SFX trials remain available. No account funding
-or automatic paid retry was performed.
+4.0084. The post-deployment dubbing preview and timed-video-SFX runs each used
+their remaining trial; both now report zero remaining and the balance is still
+USD 4.0084. No account funding or automatic paid retry was performed.
 
 ## Spoken fixture and portal scan
 
@@ -103,9 +108,14 @@ An aligned waveform comparison at 8 kHz found source-speech correlation of
 mix. This supports speech preservation; it is not a listening-quality score
 or a measurement of the music attenuation envelope.
 
-The October 3 production MCP deployment at `3b7a2c66` did not contain the
-JSON-array argument fix. PR #393 remains the pending deployment dependency;
-a successful unrelated deployment does not clear that release gate.
+The earlier October 3 MCP deployment at `3b7a2c66` did not contain the fix.
+The subsequent deployment at `946115c3` does, and both successful generation
+retests above ran after the new container took over.
+
+An energy-only check of the SFX output is inconclusive for event accuracy:
+the 3–5 second interval has more energy than the requested 5–7 second rain
+interval. This does not identify the sounds or establish the cause; do not
+claim exact timing from this output without listening verification.
 
 The current `sonilo-workflows-1.1.0.zip` was uploaded again. The portal changed
 from Scanning to **Passed**. Navigation away from and back to Skills retained
@@ -152,6 +162,6 @@ refresh or the skill's behavior in a fresh conversation. The user's separate
 `sonilo` stdio MCP entry is also still registered, so conversation tests must
 verify they use the hosted tool inventory rather than its local Python tools.
 
-Still needed: deploy the hosted fix, live dubbing/approved-script/timed-effect
-retests, the remaining scenarios above, a clean v1.1.0 Codex conversation test,
-audio listening verification, and current demo material.
+Still needed: full-video and approved-script dubbing tests, the remaining
+scenarios above, a clean v1.1.0 Codex conversation test, audio/timed-effect
+listening verification, and current demo material.
