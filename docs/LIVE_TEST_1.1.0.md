@@ -1,6 +1,6 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
-**Release status: hosted fix deployed; remaining workflow and conversation checks.**
+**Release status: JSON-array fix deployed; approved-subtitle dubbing uncovered a deployment configuration blocker.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
@@ -22,10 +22,10 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 
 | Feature | Observed result |
 | --- | --- |
-| Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. Approved-script dubbing still awaits the hosted fix. A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
+| Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. Approved-script dubbing reaches preflight but is blocked by a missing MCP container credential (see below). A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
 | Music and effects together | Passed: one call produced a video, music track, and effects track. All three URLs were readable; video contains H.264 and AAC and is 20 seconds long. |
 | Free dubbing preview | Passed after deployment: explicit Spanish JSON-string language input started an eligible free preview. The result is a readable H.264/AAC video exactly 15 seconds long; returned metadata identifies the 22-second original, one language, and trimming. |
-| Full video after preview | Language validation is fixed; the full-video/approved-script continuation remains untested. |
+| Full video after preview | Full original video plus approved Spanish subtitles was submitted after the preview. Preflight failed before task creation because the MCP container lacks its pipeline credential; full output is not yet verified. |
 | Balance and trial lookup | Passed: actual decimal USD balance and per-service trial data returned through OAuth. |
 | Credit-error guidance | Guide routes passed. Isolated authenticated MCP tests cover exhausted trials and insufficient balance with real billing/ledger code: no task, usage record, debit, or generation dispatch occurs. Production rejection and Codex's reply remain untested. |
 | Continue after account update | Isolated authenticated MCP tests pass: a credit becomes visible on the same connection, reading balance does not retry, and one explicit resubmission creates one task and debit with the original arguments. No production funding change was performed; Codex's conversation behavior remains untested. |
@@ -65,6 +65,24 @@ passed 255 cases. After deployment, all six tools return their expected domain
 validation errors for invalid arrays, rather than the old string/list error.
 Valid Spanish dubbing and timed video-SFX inputs now create successful tasks.
 Do not omit requested languages, which would select multiple defaults.
+
+## Approved-subtitle preflight configuration blocker
+
+The full-video continuation used the original 22-second fixture and the
+reviewed Spanish SRT returned by proofread. It failed before task creation
+with `Subtitle validation is temporarily unavailable, please retry`.
+Production logs identify an empty Bearer header in the preflight client;
+MCP ECS revision 95 lacks `DUBBING_API_AUTH_KEY`. Public API and worker task
+definitions already inject this existing secret. Ordinary preview generation
+succeeds because its work runs in the configured worker, whereas supplied
+subtitles must be checked in the MCP request handler before billing.
+
+The failed call left the balance unchanged at USD 4.0084 and created no
+returned generation task. Do not retry blindly or discard approved subtitles.
+[PR #398](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/398) adds
+the existing secret reference to MCP and a regression
+check covering both public and MCP preflight surfaces; the new check fails
+against the old configuration and passes with the mapping.
 
 ## OAuth test-client incident
 
