@@ -1,10 +1,12 @@
 # Revision 1.1.0 draft notes
 
-> October 2 live-test update: **not release-ready**. Production rejected the
-> documented dubbing-language and timed-SFX arguments. Music variants, stems,
-> combined output, balance, and task retrieval passed the checks described in
-> [the live verification report](LIVE_TEST_1.1.0.md). Earlier validation notes
-> below describe package preparation and do not supersede these findings.
+> October 2 live-test update: **not release-ready**. Backend PR #393 fixes the
+> production dubbing-language and timed-SFX argument failures; CI passed, but
+> deployment and live retests remain. The updated Skill upload passed the
+> portal scanner. Music variants, stems, combined output, subtitle generation,
+> speech-preserving output retrieval, balance, and task retrieval passed the
+> checks described in [the live verification report](LIVE_TEST_1.1.0.md).
+> Earlier preparation notes below do not supersede these findings.
 
 
 ## Release notes
@@ -43,3 +45,12 @@ balance guide and updated examples. All 10 public guide routes returned HTTP
 passed, and each ZIP entry was compared byte-for-byte with its source. The
 previously saved portal draft and upload described above predate this change;
 they must not be treated as the updated package or a successful scan.
+
+## October 2 subsequent verification
+
+The current Skill ZIP was reuploaded and the portal scanner returned **Passed**.
+That state persisted when leaving and reopening Skills. This resolves the
+earlier scan error only; compliance attestations remain unchecked and no review
+submission or publication has occurred. The existing recording still needs to
+be replaced by a demonstration of the updated workflows. See the live report
+for current production results and remaining release gates.

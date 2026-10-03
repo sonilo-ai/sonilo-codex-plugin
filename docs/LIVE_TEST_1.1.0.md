@@ -1,6 +1,11 @@
 # v1.1.0 live verification — October 2, 2026 (Pacific)
 
-**Release status: blocked by hosted MCP argument validation.**
+**Release status: hosted MCP fix awaits deployment and live retest.**
+
+Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
+fixes the six affected optional JSON-array string arguments without changing
+their published schemas. Its CI passed. The updated plugin Skill upload also
+passed the portal scanner; this is not approval or publication of the plugin.
 
 These are authenticated production MCP calls using a temporary Python MCP
 client, the published tool schemas, and the v1.1.0 workflow instructions.
@@ -12,7 +17,7 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 
 | Feature | Observed result |
 | --- | --- |
-| Subtitle review before dubbing | Tool is enabled and starts a task. The public demo has no speech; it correctly returned `TRANSCRIPTION_EMPTY`. Successful subtitle generation and approved-script dubbing remain untested. |
+| Subtitle review before dubbing | Subtitle generation passed on the synthetic spoken fixture: six English cues and their Spanish translations were returned, downloaded, and reviewed against the fixed narration. Approved-script dubbing still awaits the hosted fix. A separate silent source correctly returned `TRANSCRIPTION_EMPTY`. |
 | Music and effects together | Passed: one call produced a video, music track, and effects track. All three URLs were readable; video contains H.264 and AAC and is 20 seconds long. |
 | Free dubbing preview | Blocked: the documented `languages` string is rejected by argument validation before task creation. The account still has its preview allowance. |
 | Full video after preview | Blocked by the same language-argument issue; no preview/full-video chain completed. |
@@ -22,7 +27,7 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | Usage examples | Bundled examples are present; selection and wording in a clean Codex session remain untested. |
 | Generation status | Passed: existing successful and failed tasks retrieved; repeat lookup returned the same task and media URLs. A nonexistent task returned `Task not found`. |
 | Multiple variants | Passed: one 10-second request with `variants_num=3` returned three distinct playable audio files. |
-| Keep narration audible | Not tested: the available public demo has no speech. Requires a spoken-video fixture. |
+| Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Listening quality and actual attenuation still need verification. |
 | Timed sound effects | Blocked: the documented `segments` JSON string is rejected before task creation. |
 | Instrument stems | Passed: all three variants returned drums, bass, vocals, and other tracks; all 12 stem URLs were readable. |
 
@@ -47,10 +52,11 @@ strings when the annotation is `str | None`, then the argument model rejects
 the resulting list. Calling the Python tool function directly does not exercise
 this preprocessing, so earlier function-level checks missed it.
 
-Fix the hosted argument model/normalization and add a regression test through
-FastMCP dispatch. Audit other JSON-array string fields, including segments on
-music/SFX/combined tools. Then retest the live language and timed-effect paths;
-update plugin guidance if the published schema changes. Do not work around the
+PR #393 restores pre-parsed arrays to JSON strings before the argument model
+validates them. It covers dubbing and the five exposed segment fields. Actual
+FastMCP-dispatch regression tests reproduced 13 failures before the fix and
+passed all 32 cases afterward. A broader 253-test MCP/segment/OAuth suite passed.
+Merge/deployment and live retests are still required. Do not work around the
 failure by omitting requested languages, which would select multiple defaults.
 
 ## OAuth test-client incident
@@ -62,17 +68,41 @@ The test client was restarted with both scopes explicitly requested, allowing
 normal scope validation to remain enabled. Authenticated calls then succeeded.
 Tokens are held only in the temporary client's memory.
 
+Subsequent authenticated account calls succeeded while the browser still
+displayed the consent page. Do not interpret that stale page alone as a failed
+connection or click Allow repeatedly. This does not establish the cause of
+every user's consent-page loading problem.
+
 The plugin manifest remains `profile` only. This temporary client's success
 therefore does not establish the exact Codex client's sign-in/refresh behavior;
 a clean plugin OAuth check is still required before release.
 
 ## Usage reconciliation
 
-The live run recorded three generation requests, including the no-speech
+The initial run recorded three generation requests, including the no-speech
 failure, and USD 0.0675 spending. The wallet decreased by that same amount.
-The combined-video trial was consumed; dubbing and timed-SFX trials were not.
-No account funding or automatic paid retry was performed.
+The subsequent spoken-fixture subtitle and speech-preserving music runs used
+one proofread trial and one video-to-music trial. The balance remained USD
+4.0084. Dubbing and timed-video-SFX trials remain available. No account funding
+or automatic paid retry was performed.
 
-Still needed: fix and deploy hosted array-argument handling, a permitted public
-spoken-video fixture, the remaining scenarios above, a clean v1.1.0 Codex
-conversation test, the updated portal upload/scan, and current demo material.
+## Spoken fixture and portal scan
+
+The repository includes a synthetic English narration fixture in
+`tests/fixtures/`, outside the distributable plugin. The 22-second video has a
+19.055-second audio stream, including its trailing silence. Speech-preserving
+audio outputs are approximately 19.1–19.2 seconds. The subtitle text matches
+the fixed script; the Spanish translation preserves its meaning.
+
+An aligned waveform comparison at 8 kHz found source-speech correlation of
+0.9954 in isolated vocals, 0.8033 in the ordinary mix, and 0.9765 in the ducked
+mix. This supports speech preservation; it is not a listening-quality score
+or a measurement of the music attenuation envelope.
+
+The current `sonilo-workflows-1.1.0.zip` was uploaded again. The portal changed
+from Scanning to **Passed**. Navigation away from and back to Skills retained
+the passed state. No review submission or publication was performed.
+
+Still needed: deploy the hosted fix, live dubbing/approved-script/timed-effect
+retests, the remaining scenarios above, a clean v1.1.0 Codex conversation test,
+audio listening verification, and current demo material.
