@@ -4,7 +4,10 @@
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
-their published schemas. Its CI passed. The updated plugin Skill upload also
+their published schemas. CI passed on the initial fix and added credit tests.
+After synchronizing the October 3 `develop` updates, all 255 relevant local
+tests passed; CI for that synchronized commit must also pass before merge.
+The updated plugin Skill upload also
 passed the portal scanner; this is not approval or publication of the plugin.
 
 These are authenticated production MCP calls using a temporary Python MCP
@@ -99,6 +102,10 @@ An aligned waveform comparison at 8 kHz found source-speech correlation of
 0.9954 in isolated vocals, 0.8033 in the ordinary mix, and 0.9765 in the ducked
 mix. This supports speech preservation; it is not a listening-quality score
 or a measurement of the music attenuation envelope.
+
+The October 3 production MCP deployment at `3b7a2c66` did not contain the
+JSON-array argument fix. PR #393 remains the pending deployment dependency;
+a successful unrelated deployment does not clear that release gate.
 
 The current `sonilo-workflows-1.1.0.zip` was uploaded again. The portal changed
 from Scanning to **Passed**. Navigation away from and back to Skills retained
