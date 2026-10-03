@@ -32,7 +32,7 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | Usage examples | Bundled examples are present; selection and wording in a clean Codex session remain untested. |
 | Generation status | Passed: existing successful and failed tasks retrieved; repeat lookup returned the same task and media URLs. A nonexistent task returned `Task not found`. |
 | Multiple variants | Passed: one 10-second request with `variants_num=3` returned three distinct playable audio files. |
-| Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Listening quality and actual attenuation still need verification. |
+| Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Windowed mixture analysis measures about 10.5 dB lower music during speech than the ordinary mix, with recovery in pauses. Subjective listening quality still needs verification. |
 | Timed sound effects | After deployment, the documented segments string is accepted and generation succeeds with a readable 22-second H.264/AAC video. Precise event timing and sound identity still need listening verification; successful transport and output duration do not prove those. |
 | Instrument stems | Passed: all three variants returned drums, bass, vocals, and other tracks; all 12 stem URLs were readable. |
 
@@ -137,8 +137,24 @@ the fixed script; the Spanish translation preserves its meaning.
 
 An aligned waveform comparison at 8 kHz found source-speech correlation of
 0.9954 in isolated vocals, 0.8033 in the ordinary mix, and 0.9765 in the ducked
-mix. This supports speech preservation; it is not a listening-quality score
-or a measurement of the music attenuation envelope.
+mix. This supports speech preservation; it is not a listening-quality score.
+
+A subsequent mixture analysis aligned the separately returned vocal and music
+tracks to each mix at 8 kHz, then fitted their gains in 250 ms windows. Median
+relative fit residuals were 1.41% (ordinary mix) and 1.61% (ducked mix). After
+excluding weak music and high residuals, 62 speech windows and 11 quiet windows
+remained in each mix. Median music gain during speech was 0.4232 in the
+ordinary mix and 0.1270 in the ducked mix: about 10.5 dB attenuation. The ducked
+music gain increased to a 0.1772 median in quiet windows and rose across the
+final quiet tail from 0.1772 to 0.2876. This establishes attenuation and recovery
+for this output, not subjective intelligibility or a guarantee for every input.
+
+A local listening page at `http://127.0.0.1:8123/` compares the actual ordinary
+and ducked mixes, timed SFX, 15-second preview, and 22-second full dub. All five
+browser players loaded without media errors; the SFX jump control seeks to
+5 seconds without autoplay. Files and signed media links remain outside Git.
+Human listening feedback on event identity/timing is pending. This page is a
+result comparison, not a substitute for a fresh Codex conversation demo.
 
 The earlier October 3 MCP deployment at `3b7a2c66` did not contain the fix.
 The subsequent deployment at `946115c3` does, and both successful generation
