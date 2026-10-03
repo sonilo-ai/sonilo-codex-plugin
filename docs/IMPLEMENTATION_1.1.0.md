@@ -1,5 +1,12 @@
 # Sonilo 1.1.0 implementation
 
+> October 2 live-test update: **not release-ready**. Production rejected the
+> documented dubbing-language and timed-SFX arguments. Music variants, stems,
+> combined output, balance, and task retrieval passed the checks described in
+> [the live verification report](LIVE_TEST_1.1.0.md). Earlier validation notes
+> below describe package preparation and do not supersede these findings.
+
+
 Scope: the 13 features in the [manager plan](https://docs.google.com/document/d/1woqbRgMlCemdw46mpP6Wz1uDkVUK9_C4QyPi2cX2y0s/edit).
 This package updates the hosted-MCP workflow instructions and listing metadata;
 it does not deploy the server, publish the plugin, or change account entitlements.

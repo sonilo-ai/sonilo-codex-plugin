@@ -1,5 +1,12 @@
 # Revision 1.1.0 draft notes
 
+> October 2 live-test update: **not release-ready**. Production rejected the
+> documented dubbing-language and timed-SFX arguments. Music variants, stems,
+> combined output, balance, and task retrieval passed the checks described in
+> [the live verification report](LIVE_TEST_1.1.0.md). Earlier validation notes
+> below describe package preparation and do not supersede these findings.
+
+
 ## Release notes
 
 Update the bundled Sonilo workflow skill and directory description to cover subtitle review before dubbing, eligible single-language dubbing previews, user-requested full-video continuation, combined music and sound effects, music variants and stems, timed effects, speech preservation, and task retrieval after interruptions.
