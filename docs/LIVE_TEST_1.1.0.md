@@ -1,6 +1,6 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
-**Release status: both hosted fixes deployed; full-video approved-subtitle flow passed. Conversation and listening checks remain.**
+**Release status: hosted fixes and live media checks passed; user listening acceptance recorded. Fresh conversation verification and updated review recording remain.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
@@ -32,8 +32,8 @@ local; no tokens, reviewer credentials, or signed result links are committed.
 | Usage examples | Bundled examples are present; selection and wording in a clean Codex session remain untested. |
 | Generation status | Passed: existing successful and failed tasks retrieved; repeat lookup returned the same task and media URLs. A nonexistent task returned `Task not found`. |
 | Multiple variants | Passed: one 10-second request with `variants_num=3` returned three distinct playable audio files. |
-| Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Windowed mixture analysis measures about 10.5 dB lower music during speech than the ordinary mix, with recovery in pauses. Subjective listening quality still needs verification. |
-| Timed sound effects | After deployment, the documented segments string is accepted and generation succeeds with a readable 22-second H.264/AAC video. Precise event timing and sound identity still need listening verification; successful transport and output duration do not prove those. |
+| Keep narration audible | Generation passed with `preserve_speech=true` and `ducking=true`: music, isolated vocals, ordinary mix, and ducked mix were returned. All four AAC files were readable; waveform comparison confirms source speech remains in both mixes. Windowed mixture analysis measures about 10.5 dB lower music during speech than the ordinary mix, with recovery in pauses. The user subsequently listened to the review page and reported no issues. |
+| Timed sound effects | After deployment, the documented segments string is accepted and generation succeeds with a readable 22-second H.264/AAC video. The user subsequently listened to the review page (including the requested door/rain intervals) and reported no issues. This is human acceptance of the sample, not a guarantee of model accuracy on all inputs. |
 | Instrument stems | Passed: all three variants returned drums, bass, vocals, and other tracks; all 12 stem URLs were readable. |
 
 Media verification used ffprobe for actual file readability, codecs, and duration.
@@ -153,7 +153,7 @@ A local listening page at `http://127.0.0.1:8123/` compares the actual ordinary
 and ducked mixes, timed SFX, 15-second preview, and 22-second full dub. All five
 browser players loaded without media errors; the SFX jump control seeks to
 5 seconds without autoplay. Files and signed media links remain outside Git.
-Human listening feedback on event identity/timing is pending. This page is a
+On October 3, the user reported that the listening page sounded correct with no issues, resolving the subjective acceptance check. This page is a
 result comparison, not a substitute for a fresh Codex conversation demo.
 
 The earlier October 3 MCP deployment at `3b7a2c66` did not contain the fix.
@@ -163,7 +163,8 @@ retests above ran after the new container took over.
 An energy-only check of the SFX output is inconclusive for event accuracy:
 the 3–5 second interval has more energy than the requested 5–7 second rain
 interval. This does not identify the sounds or establish the cause; do not
-claim exact timing from this output without listening verification.
+claim exact timing from the energy check alone. The user subsequently listened
+to the review page and accepted the sample.
 
 The current `sonilo-workflows-1.1.0.zip` was uploaded again. The portal changed
 from Scanning to **Passed**. Navigation away from and back to Skills retained
@@ -210,7 +211,29 @@ refresh or the skill's behavior in a fresh conversation. The user's separate
 `sonilo` stdio MCP entry is also still registered, so conversation tests must
 verify they use the hosted tool inventory rather than its local Python tools.
 
-Still needed: the remaining conversation scenarios above, a clean v1.1.0
-Codex conversation test, audio/timed-effect listening verification, and current
-demo material. The fresh-conversation test awaits explicit authorization to
-create a temporary Codex task; it will use read-only queries and existing media.
+Still needed: fresh conversation verification and current demo material. On
+October 3 the user authorized a temporary Codex test task and accepted the
+listening page. The task was created for account lookup, existing full-dub
+retrieval, and usage examples, without generation or account changes. Its
+first run did not pass: the installed 1.1.0 skill was selected, but only the
+legacy local `mcp__sonilo__get_account_services` was available and it returned
+`Invalid SONILO_API_KEY`. Hosted `get_generation_task` was absent. No generation
+or account mutation occurred. Native default-config diagnostics likewise find
+the installed plugin's declared `sonilo` MCP server, but runtime inventory shows
+the legacy stdio server only. Disabling that legacy server in a temporary
+process yields no hosted Sonilo tools; the user's actual settings are unchanged.
+The connection/runtime-loading cause remains unresolved; do not count this as
+a successful installed-plugin test or infer a hosted-backend regression.
+
+## Public sample-link cleanup
+
+The live 1.0.0 directory page includes an internal review-source URL in its
+third starter prompt. This is distinct from the review recording field. The
+1.1.0 portal draft and manifest omit that fixed URL; the remaining prompts now
+use ordinary wording rather than asking users to understand public-HTTPS
+terminology before they start. Media URL validation remains in the skill.
+The live page will retain its current prompt until an approved update is
+published. Do not delete the old sample while published prompts or review
+cases still reference it. A future one-click sample should be an intentionally
+public, rights-cleared asset on a stable examples URL, not a temporary reviewer
+fixture.

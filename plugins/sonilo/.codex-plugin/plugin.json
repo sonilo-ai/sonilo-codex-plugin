@@ -44,8 +44,8 @@
     "termsOfServiceURL": "https://sonilo.com/terms-of-service",
     "defaultPrompt": [
       "Create 30 seconds of jazz and provide separate drums and bass tracks.",
-      "Add music and sound effects to this public HTTPS video and return a new video with clear speech.",
-      "Translate this public HTTPS video into English subtitles for me to review before dubbing."
+      "Add music and sound effects to my video, keeping the voices clear.",
+      "Translate my video into English subtitles for me to review before dubbing."
     ],
     "brandColor": "#111111",
     "composerIcon": "./assets/icon.png",
