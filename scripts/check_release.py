@@ -25,6 +25,11 @@ MCP_URL = "https://api.sonilo.com/mcp"
 RESOURCE_METADATA_URL = f"{MCP_URL}/.well-known/oauth-protected-resource"
 RFC_RESOURCE_METADATA_URL = "https://api.sonilo.com/.well-known/oauth-protected-resource/mcp"
 AUTHORIZATION_SERVER = "https://clerk.platform.sonilo.com/"
+BALANCE_GUIDE_PATH = WORKFLOW_SKILL_PATH.parent / "references" / "account-and-links.md"
+BALANCE_GUIDE_URLS = {
+    f"https://platform.sonilo.com{prefix}/usage-and-entitlements"
+    for prefix in ("", "/zh", "/zh-HK", "/de", "/es", "/fr", "/it", "/ja", "/ko", "/pt")
+}
 PAID_TOOL_NAMES = {
     "text_to_music",
     "text_to_sfx",
@@ -33,6 +38,11 @@ PAID_TOOL_NAMES = {
     "video_to_video_music",
     "video_to_video_sfx",
     "audio_ducking",
+    "video_to_sound",
+    "video_to_video_sound",
+    "proofread",
+    "dubbing",
+    "analyze_video",
 }
 
 
@@ -160,7 +170,9 @@ def check_local() -> None:
     require(manifest.get("mcpServers") == "./.mcp.json", "manifest must reference .mcp.json")
     require(WORKFLOW_SKILL_PATH.is_file(), "bundled sonilo-workflows skill is missing")
     require(WORKFLOW_AGENT_PATH.is_file(), "bundled sonilo-workflows agent metadata is missing")
-    sonilo_mcp = mcp_config.get("mcpServers", {}).get("sonilo", {})
+    servers = mcp_config.get("mcpServers", {})
+    require(set(servers) == {"sonilo_platform"}, "hosted MCP must avoid the legacy local sonilo server name")
+    sonilo_mcp = servers["sonilo_platform"]
     require(sonilo_mcp.get("type") == "http", "MCP transport type must be http")
     require(sonilo_mcp.get("url") == MCP_URL, f"MCP URL must be {MCP_URL}")
     require(sonilo_mcp.get("scopes") == ["profile"], "MCP OAuth scope must be limited to profile")
@@ -176,7 +188,7 @@ def check_local() -> None:
     require(manifest.get("homepage") == "https://platform.sonilo.com", "homepage must use Sonilo Platform")
 
     interface = manifest.get("interface", {})
-    require(interface.get("shortDescription") == "Create music and sound effects", "portal subtitle is out of sync")
+    require(interface.get("shortDescription") == "Music, sound effects & dubbing", "portal subtitle is out of sync")
     require(len(interface["shortDescription"]) <= 30, "portal subtitle exceeds 30 characters")
     default_prompts = interface.get("defaultPrompt")
     require(
@@ -224,6 +236,18 @@ def check_local() -> None:
 
     skill = WORKFLOW_SKILL_PATH.read_text(encoding="utf-8")
     require(skill.startswith("---\nname: sonilo-workflows\n"), "skill frontmatter is invalid")
+    # References ship with the skill and are loaded only for the relevant workflow.
+    # Validate actual links so a missing packaged reference cannot silently drop
+    # account or dubbing guidance from the installed plugin.
+    references = re.findall(r"\]\((references/[^)]+\.md)\)", skill)
+    require(bool(references), "skill must link its workflow references")
+    for relative_path in set(references):
+        reference = WORKFLOW_SKILL_PATH.parent / relative_path
+        require(reference.is_file(), f"missing bundled reference: {relative_path}")
+    guidance = skill + "\n" + "\n".join(
+        (WORKFLOW_SKILL_PATH.parent / path).read_text(encoding="utf-8")
+        for path in sorted(set(references))
+    )
     require(
         "Validate public HTTPS media inputs before any tool call" in skill,
         "skill metadata must advertise media-input validation",
@@ -239,8 +263,8 @@ def check_local() -> None:
         "new video with the generated audio mixed in" in skill,
         "skill must distinguish video-producing tools from audio-only tools",
     )
-    require("`preserve_speech`" in skill, "skill must document speech preservation routing")
-    require("`isolate_vocals`" in skill, "skill must document vocal-isolation routing")
+    require("`preserve_speech=true`" in skill, "skill must document speech preservation routing")
+    require("isolate_vocals" not in guidance, "obsolete local-only parameter in hosted guidance")
     require("A Sonilo Platform account is required" in skill, "skill must state the required account system")
     require(
         "Accounts created only on `sonilo.com`" in skill,
@@ -259,20 +283,29 @@ def check_local() -> None:
         "skill must reject unsafe media URLs without account lookups",
     )
     require(
-        "Do not provide or direct users to pricing, checkout, subscription, credit" in skill,
+        "Do not provide or direct users to pricing, checkout, subscription, credit" in guidance,
         "skill must not direct users to purchase or recharge",
     )
     require(
-        "do not repeat or paraphrase the URL" in skill,
+        "do not repeat or paraphrase the URL" in guidance,
         "skill must suppress purchase URLs returned by tools",
     )
     require(
-        "to visit a website, account, billing, or pricing page" in skill,
+        "to visit a website,\n  account, billing, or pricing page" in guidance,
         "skill must not indirectly route users to purchase destinations",
+    )
+    guide_reference = BALANCE_GUIDE_PATH.read_text(encoding="utf-8")
+    guide_urls = set(re.findall(
+        r"https://platform\.sonilo\.com[^\s|)]*/usage-and-entitlements[^\s|)]*",
+        guide_reference,
+    ))
+    require(
+        guide_urls == BALANCE_GUIDE_URLS,
+        "balance guide must configure all 10 published routes without query data or invented paths",
     )
     require("Poll `get_generation_task`" in skill, "skill must document asynchronous polling")
     agent_metadata = WORKFLOW_AGENT_PATH.read_text(encoding="utf-8")
-    require('value: "sonilo"' in agent_metadata, "skill agent metadata must depend on Sonilo MCP")
+    require('value: "sonilo_platform"' in agent_metadata, "skill dependency must match the hosted MCP server name")
     require(f'url: "{MCP_URL}"' in agent_metadata, "skill agent metadata has the wrong MCP URL")
 
     entries = marketplace.get("plugins", [])
@@ -334,6 +367,14 @@ def check_live() -> None:
     for field in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
         status, _, _ = request(interface[field])
         require(status == 200, f"{field} returned {status}, expected 200")
+
+    for url in sorted(BALANCE_GUIDE_URLS):
+        status, headers, body = request(url)
+        require(status == 200, f"balance guide {url} returned {status}, expected 200")
+        require("text/html" in headers.get("content-type", ""), f"guide is not HTML: {url}")
+        html = body.decode("utf-8")
+        canonical = re.search(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', html)
+        require(canonical is not None and canonical[1] == url, f"wrong guide canonical: {url}")
 
 
 def main() -> int:

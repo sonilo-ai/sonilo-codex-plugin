@@ -1,7 +1,7 @@
 {
   "name": "sonilo",
-  "version": "0.1.0",
-  "description": "Generate licensed music, sound effects, and mixed videos with Sonilo Platform in Codex.",
+  "version": "1.1.0",
+  "description": "Generate licensed music, sound effects, mixed videos, translated subtitles, and dubbing with Sonilo Platform.",
   "author": {
     "name": "Sonilo",
     "email": "support@sonilo.com",
@@ -15,14 +15,16 @@
     "sound-effects",
     "video",
     "audio",
-    "sonilo"
+    "sonilo",
+    "dubbing",
+    "subtitles"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Sonilo",
-    "shortDescription": "Create music and sound effects",
-    "longDescription": "Connect your Sonilo Platform account to create licensed AI music, background music, sound effects, and newly mixed videos from text or public HTTPS videos. Generate text-to-music, text-to-sound-effect audio, video-matched soundtracks, finished videos with generated music or sound effects, and audio ducking under voiceovers. Check generation status and account usage directly in Codex. Generation can consume credits already available in your Sonilo Platform account; read-only checks do not. Sonilo.com creator accounts are separate and cannot be used with this plugin.",
+    "shortDescription": "Music, sound effects & dubbing",
+    "longDescription": "Connect your Sonilo Platform account to create licensed music, sound effects, and newly mixed videos from text or public HTTPS media. Combine music and effects, keep narration clear, request multiple music variants or instrument stems, review translated subtitles before dubbing, and retrieve generation results. Eligible accounts can preview dubbing before requesting a full video. Check your current USD cash balance, available services, free-trial allowance, and usage in Codex. Generation can consume existing account credits; read-only checks do not. Features and previews depend on account access and the connected service. Sonilo.com creator accounts are separate and cannot be used with this plugin.",
     "developerName": "Sonilo",
     "category": "Creativity",
     "capabilities": [
@@ -30,16 +32,20 @@
       "Sound-effect generation",
       "Video soundtrack generation",
       "Video sound-effect generation",
+      "Combined music and sound effects",
       "Audio ducking",
-      "Usage reporting"
+      "Music variants and stems",
+      "Subtitle review and dubbing",
+      "Cash balance, trial allowance and usage reporting",
+      "Generation-task retrieval"
     ],
     "websiteURL": "https://platform.sonilo.com",
     "privacyPolicyURL": "https://sonilo.com/privacy-policy",
     "termsOfServiceURL": "https://sonilo.com/terms-of-service",
     "defaultPrompt": [
-      "Create 30 seconds of upbeat lo-fi music for a product demo.",
-      "Create a cinematic 3-second whoosh sound effect.",
-      "Add cinematic music to this public HTTPS video and return a new video while preserving speech."
+      "Create 30 seconds of jazz and provide separate drums and bass tracks.",
+      "Add music and sound effects to my video, keeping the voices clear.",
+      "Translate my video into English subtitles for me to review before dubbing."
     ],
     "brandColor": "#111111",
     "composerIcon": "./assets/icon.png",
