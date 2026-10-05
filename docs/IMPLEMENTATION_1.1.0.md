@@ -1,14 +1,10 @@
 # Sonilo 1.1.0 implementation
 
-> October 3 verification update: **not release-ready**. Backend PRs #393 and
-> #398 are merged and deployed. Live dubbing preview, full approved-script
-> continuation, and timed-SFX generation now succeed. Clean Codex conversation
-> checks and updated review recording remain. The user accepted the listening page.
-> The bundled MCP now uses `sonilo_platform` to avoid the legacy local name.
-> The revised Skill upload passed its new portal scan.
-> Production media results and isolated credit-recovery coverage are recorded
-> in [the live verification report](LIVE_TEST_1.1.0.md). Package coverage below
-> is not proof that every workflow has passed a clean Codex conversation test.
+> October 4 update: desktop hosted balance/task reads and all three portal
+> refusal scenarios pass. The user accepted the prior listening samples.
+> Backend fixes are deployed and the Skill scan passed. A current actual
+> walkthrough and final review attestations/submission remain. See
+> [the live report](LIVE_TEST_1.1.0.md) for verification scope and limitations.
 
 
 Scope: the 13 features in the [manager plan](https://docs.google.com/document/d/1woqbRgMlCemdw46mpP6Wz1uDkVUK9_C4QyPi2cX2y0s/edit).

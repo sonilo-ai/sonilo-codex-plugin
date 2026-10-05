@@ -1,14 +1,10 @@
 # Revision 1.1.0 draft notes
 
-> October 3 live-test update: **not release-ready**. Backend PRs #393 and #398
-> are merged and deployed; the latest full CI passed 3,130 tests (19 skipped).
-> Live dubbing preview, full approved-script continuation, and timed-SFX
-> generation succeed, and the user accepted the listening page. Clean Codex
-> conversation checks and a current recording remain. The latest connection
-> routing revision passed its new Skill scan. Music variants, stems, combined output, subtitle generation,
-> speech-preserving output retrieval, balance, and task retrieval passed the
-> checks described in [the live verification report](LIVE_TEST_1.1.0.md).
-> Earlier preparation notes below do not supersede these findings.
+> October 4 update: desktop hosted balance/task reads and all three portal
+> refusal scenarios pass. The user accepted the prior listening samples.
+> Backend fixes are deployed and the Skill scan passed. A current actual
+> walkthrough and final review attestations/submission remain. See
+> [the live report](LIVE_TEST_1.1.0.md) for verification scope and limitations.
 
 
 ## Release notes

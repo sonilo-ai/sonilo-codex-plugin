@@ -1,6 +1,6 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
-**Release status: hosted fixes and live media checks passed; user listening acceptance recorded. Fresh conversation verification and updated review recording remain.**
+**Release status: hosted fixes, media verification, desktop connection, and refusal checks passed. Updated recording and review submission remain.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)
 fixes the six affected optional JSON-array string arguments without changing
@@ -275,3 +275,47 @@ Codex runtime; the desktop process still requires a reload/restart and retest.
 Local release validation and `git diff --check` pass. After the new upload
 completed, reloading the portal and returning to Skills showed **Passed** for
 the revised ZIP. This verifies its scanner result, not plugin review approval.
+
+
+## October 4 desktop acceptance and submission preparation
+
+The desktop conversation now exposes `sonilo_platform` alongside the legacy
+local server. Direct hosted `get_account_services` and `get_generation_task`
+calls succeed. Account data initially reported USD 2.7287; the existing full
+Spanish dub returned succeeded, video, and SRT. This resolves the desktop
+connection blocker above; no legacy tool was used.
+
+The temporary desktop acceptance chat passed six scenarios: account lookup,
+existing-task continuation, an explanation-only preview/full-version question,
+rejection of loopback and local-file media inputs, capability advice without
+generation, and a nonexistent task returning `Task not found` without retry.
+The three exact portal negative prompts were also checked independently:
+creative music advice, unsupported visual editing, and HTTPS loopback media.
+All three caused zero Sonilo calls. A separate `get_usage(days=30)` call passed
+and was correctly distinguished from cash balance.
+
+Portal test cases now use the immutable 22-second synthetic spoken fixture
+instead of the old temporary reviewer-source URL. The music case requests
+10-second variants, matching the successful generation; timed effects include
+the final 7–22 second quiet interval. Reviewer notes disclose the guide's
+View pricing / View billing buttons and explicitly state that the replacement
+walkthrough is still pending. The used dubbing trial is disclosed: a free-only
+request must stop rather than silently become a paid job.
+
+The native computer-use tool rejected Terminal access, so an actual CLI screen
+recording could not be captured with that tool. No output montage, rendered
+transcript, or results page was substituted for a real plugin recording.
+The previous recording URL remains in the draft and is marked as incomplete
+coverage in the reviewer notes. The final page requires explicit acceptance
+of OpenAI terms plus compliance, rights, and age-suitability attestations;
+these remain unchecked. No submission or publication has occurred.
+
+
+Two additional production generations on October 4 completed successfully
+through the installed hosted tools: a 3-second cinematic text sound effect,
+and the 22-second spoken fixture with combined music/effects,
+`preserve_speech=true`, and `ducking=true`. The latter returned a new video,
+music, effects, and processed-music tracks. The balance changed from USD
+2.7287 to USD 2.4065 (USD 0.3222 for these tests). Earlier user listening
+acceptance applies to the previous samples, not these new outputs.
+The recording handoff is in [REVIEW_RECORDING_1.1.0.md](REVIEW_RECORDING_1.1.0.md).
