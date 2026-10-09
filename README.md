@@ -62,13 +62,15 @@ shows only the old tools, restart the app before starting a new conversation.
 - Place sound effects at specified times
 - Duck music under voice audio
 - Review translated subtitles before dubbing into the requested languages
+- Use a video, audio, or subtitle file from your computer by uploading it to Sonilo
 - Use an eligible account's 15-second dubbing preview, then request a full video
 - Inspect current USD cash balance, account services, trial allowance, and historical usage
 - Retrieve an existing generation after waiting or a timeout without resubmission
 
 Features depend on the connected hosted tool schemas and account access. The
 [Sonilo MCP repository](https://github.com/sonilo-ai/sonilo-mcp) is a useful
-feature reference, but its local-file and playback tools are not bundled here.
+feature reference, but its file-path parameters and playback tools are not
+bundled here; local files go through the hosted upload tool instead.
 
 ### Example prompts
 
@@ -79,10 +81,14 @@ feature reference, but its local-file and playback tools are not bundled here.
 - "Generate 30 seconds of jazz with separate drums and bass tracks."
 - "Translate this video into English subtitles first. I will correct the product names before dubbing: `<public HTTPS video URL>`"
 - "Let me try English dubbing for free: `<public HTTPS video URL>`"
+- "Add music to `~/Videos/launch.mp4` and give me the finished video."
 - "What is my cash balance, and how many free text-to-music runs remain?"
 
 Use real public HTTPS media URLs in place of the labels above. A local file
-or attachment is not a hosted media URL. The plugin returns actual result
+or attachment is not a hosted media URL: when the hosted `create_upload_url`
+tool is available and Codex can run the upload, the plugin uploads a file you
+name to temporary storage on your Sonilo Platform account and uses the link it
+gets back; otherwise it asks for a public HTTPS URL. The plugin returns actual result
 links for previews, subtitles, videos, variants, and stems.
 
 ### Account status and continuation
@@ -114,7 +120,7 @@ existing account credits. Available free runs depend on the service and
 account; dubbing previews require one target language and no supplied script.
 Multiple music variants and multi-language dubbing can cost more. Account and usage
 tools (`get_account_services`, `get_usage`, `get_generation_task`) are
-read-only and never incur a charge. Paid tools run only after you explicitly
+read-only and never incur a charge. Uploading a file is also free. Paid tools run only after you explicitly
 ask for them.
 
 ## What this plugin connects to
@@ -125,10 +131,13 @@ hosted endpoint:
 - **Endpoint:** `https://api.sonilo.com/mcp` (HTTPS, Streamable HTTP MCP)
 - **Authorization server:** Sonilo's Clerk instance (OAuth 2.1 + PKCE; the
   plugin registers dynamically — no pre-shared client secret)
-- **Data sent:** your prompts and any media URLs you provide to a tool
+- **Data sent:** your prompts, any media URLs you provide to a tool, and any
+  local file you ask the plugin to process, which is uploaded to Sonilo as a
+  temporary working file
 - **Data stored:** the OAuth token, kept locally per user by Codex
 
-No local command or binary is executed by this plugin.
+The plugin bundles no local command or binary. Uploading a local file uses
+an HTTP PUT that Codex runs in your environment when you ask for it.
 
 ## Support
 

@@ -1,6 +1,6 @@
 {
   "name": "sonilo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Generate licensed music, sound effects, mixed videos, translated subtitles, and dubbing with Sonilo Platform.",
   "author": {
     "name": "Sonilo",
@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Sonilo",
     "shortDescription": "Music, sound effects & dubbing",
-    "longDescription": "Connect your Sonilo Platform account to create licensed music, sound effects, and newly mixed videos from text or public HTTPS media. Combine music and effects, keep narration clear, request multiple music variants or instrument stems, review translated subtitles before dubbing, and retrieve generation results. Eligible accounts can preview dubbing before requesting a full video. Check your current USD cash balance, available services, free-trial allowance, and usage in Codex. Generation can consume existing account credits; read-only checks do not. Features and previews depend on account access and the connected service. Sonilo.com creator accounts are separate and cannot be used with this plugin.",
+    "longDescription": "Create licensed music, sound effects, and multilingual voiceovers for your videos with Sonilo.\n\n• Explore multiple music options and get separate instrument tracks for editing.\n• Get newly mixed videos with music and sound effects together, while keeping speech clear.\n• Review translated subtitles before creating a dubbed video.\n\nYou can also place sound effects at specific times, check your USD balance and free trials, and retrieve existing results after an interruption. Eligible accounts can preview dubbing before requesting the full video.\n\nConnect a Sonilo Platform account. Media inputs can be public HTTPS links or files on your computer, which are uploaded to Sonilo for processing. Generation may use existing account funds; account and task lookups are free. Features and previews depend on account access and service availability. Sonilo.com creator accounts are separate.",
     "developerName": "Sonilo",
     "category": "Creativity",
     "capabilities": [
@@ -43,7 +43,7 @@
     "privacyPolicyURL": "https://sonilo.com/privacy-policy",
     "termsOfServiceURL": "https://sonilo.com/terms-of-service",
     "defaultPrompt": [
-      "Create 30 seconds of jazz and provide separate drums and bass tracks.",
+      "Create three 10-second jazz music options with separate drums and bass tracks.",
       "Add music and sound effects to my video, keeping the voices clear.",
       "Translate my video into English subtitles for me to review before dubbing."
     ],
