@@ -84,10 +84,11 @@ bundled here; local files go through the hosted upload tool instead.
 - "Add music to `~/Videos/launch.mp4` and give me the finished video."
 - "What is my cash balance, and how many free text-to-music runs remain?"
 
-Use real public HTTPS media URLs in place of the labels above, or name a
-file on your computer. A local file is uploaded to Sonilo with the hosted
-`create_upload_url` tool before it is processed; this needs an environment
-where Codex can read the file and run the upload. The plugin returns actual result
+Use real public HTTPS media URLs in place of the labels above. A local file
+or attachment is not a hosted media URL: when the hosted `create_upload_url`
+tool is available and Codex can run the upload, the plugin uploads a file you
+name to temporary storage on your Sonilo Platform account and uses the link it
+gets back; otherwise it asks for a public HTTPS URL. The plugin returns actual result
 links for previews, subtitles, videos, variants, and stems.
 
 ### Account status and continuation

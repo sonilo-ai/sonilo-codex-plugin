@@ -295,15 +295,15 @@ def check_local() -> None:
     )
     require("`create_upload_url`" in skill, "skill is missing local-file upload guidance")
     require(
-        "Never upload a user's file to\n  any other host" in skill,
+        "upload a user's file to a third-party host" in skill,
         "skill must confine local-file uploads to Sonilo's upload URL",
     )
     require(
-        "do not show it to the user" in skill,
+        "never show it to the\nuser" in skill,
         "skill must keep the one-time upload URL out of replies",
     )
     require(
-        "ask for a public HTTPS link" in skill,
+        "do not try another upload route" in skill,
         "skill must fall back to a public link when an upload cannot run",
     )
     require(

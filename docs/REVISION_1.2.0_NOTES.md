@@ -12,7 +12,10 @@ Two hosted tool changes landed after 1.1.0 was submitted:
   `proofread` is no longer in the hosted tool list, and OpenAI's scan no
   longer shows it. The 1.1.0 skill still routes to `proofread`.
 - `create_upload_url` lets the hosted server take a file from the user's
-  machine. The 1.1.0 skill tells the model that a local file cannot be used.
+  machine. The skill guidance for it was added to the `codex/plugin-v1.1.0`
+  branch in PR #3 on October 9, after the 1.1.0 package had been submitted,
+  so the package in review does not contain it. This draft builds on that
+  guidance and does not replace it.
 
 ## Release notes
 
@@ -34,8 +37,8 @@ call for an unsafe URL.
 
 - `plugins/sonilo/.codex-plugin/plugin.json`: version 1.2.0; the long
   description no longer says media must be public HTTPS links.
-- `plugins/sonilo/skills/sonilo-workflows/SKILL.md`: routing table, service-key
-  note, new "Use a file from the user's machine" section.
+- `plugins/sonilo/skills/sonilo-workflows/SKILL.md`: subtitle routing and the
+  service-key note. The "Use a local file" section comes from PR #3 unchanged.
 - `references/dubbing.md`, `references/examples.md`: tool name, upload of an
   edited script, one local-file example.
 - `scripts/check_release.py`: paid-tool list, a guard against routing to the
@@ -50,11 +53,14 @@ call for an unsafe URL.
   - Baseline with the installed 1.1.0 skill: 8 of 9 subtitle requests chose
     `generate_video_subtitles`; 1 stopped, reporting that `proofread` was not
     available.
-  - With this draft: 6 of 6 subtitle requests chose `generate_video_subtitles`.
-  - Local file, network blocked: 2 of 2 called `create_upload_url`, could not
+  - With this draft, after merging PR #3: 4 of 4 subtitle requests chose
+    `generate_video_subtitles`.
+  - Local file, network blocked: 1 of 1 called `create_upload_url`, could not
     upload, started no generation, and asked for a public HTTPS link.
-  - Local file, network allowed: 1 of 1 uploaded (PUT 200) and then called
-    `video_to_video_music` with the returned link.
+  - Local file, network allowed: 1 of 1 uploaded and then called a generation
+    tool with the returned link. It chose `video_to_music` although the
+    request asked for a finished video, where `video_to_video_music` is the
+    documented route; one run, not investigated.
   - Private-network `http://` URL: 1 of 1 refused with no tool call.
 - Every generation call in these runs was stopped by the session's approval
   policy before executing, so no task was created and nothing was charged.
