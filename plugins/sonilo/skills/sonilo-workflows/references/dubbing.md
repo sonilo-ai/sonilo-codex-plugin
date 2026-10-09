@@ -2,8 +2,10 @@
 
 ## Review the script before dubbing
 
-1. For “translate the subtitles first; I will correct them,” use `proofread`
-   only. It may consume credits; it produces SRT files, not a dubbed video.
+1. For “translate the subtitles first; I will correct them,” use
+   `generate_video_subtitles` only. Its availability and trial allowance are
+   listed under the service key `proofread`. It may consume credits; it
+   produces SRT files, not a dubbed video.
    Check that the service is available before submitting.
 2. Return the source transcript and target-language SRT URLs actually present
    in the result. Report warnings without claiming the files are invalid
@@ -12,7 +14,9 @@
    HTTPS SRT/VTT URL per target language, with keys matching the requested
    languages exactly. Validate every subtitle URL as well as the video URL.
    If the user edits text in chat, do not silently reuse the unedited SRT:
-   obtain a reachable URL for the approved script before submission.
+   obtain a reachable URL for the approved script before submission. An
+   edited `.srt` or `.vtt` saved on the user's machine can be uploaded with
+   `create_upload_url`; use its `file_url` as the script URL.
 4. Set `export_srt=true` only if the user wants aligned subtitles with the
    dubbed result and scripts were supplied. Deliver each language's video
    and any successful subtitle export; report a blocked export separately.
@@ -23,8 +27,10 @@
   and accidentally accept the server's multiple-language default. Ask for the
   target language if missing. Dubbing is billed per language.
 - Follow the hosted schema: `dubbing.languages` currently takes a JSON array
-  encoded as a string (for example, `["en"]`), while `proofread.languages`
-  takes a list. Do not copy local MCP parameter types or local-file options.
+  encoded as a string (for example, `["en"]`), while
+  `generate_video_subtitles.languages` takes a list. Do not copy local MCP
+  parameter types or path parameters; a local file goes through
+  `create_upload_url`.
 - A free dubbing preview is conditional on current account eligibility, a
   single target language, and no supplied subtitles. Check
   `trial.dubbing.remaining`; never promise every user a free preview.

@@ -1,6 +1,6 @@
 ---
 name: sonilo-workflows
-description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Check cash balance, usage, and trial allowance, preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call; never direct users to pricing, checkout, subscriptions, or credit recharge.
+description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Check cash balance, usage, and trial allowance, preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
 ---
 
 # Sonilo Workflows
@@ -27,8 +27,9 @@ use a different namespace; identify them by their hosted schemas, including
   generation to check service availability and trial allowance. Check both
   the connected tools and `available_services`; describe an unavailable feature
   honestly instead of silently substituting a different paid operation.
-  `analyze_video` uses the service key `video_analysis`; other generation tools
-  in the routing table use their tool name as the service key.
+  `analyze_video` uses the service key `video_analysis`, and
+  `generate_video_subtitles` uses the service key `proofread`; other
+  generation tools in the routing table use their tool name as the service key.
 - For account, balance, trial, or insufficient-credit questions, read
   [account and links](references/account-and-links.md). `get_usage` reports
   historical spending, not the remaining balance.
@@ -45,14 +46,36 @@ user-supplied video, audio, and subtitle URL.
   unsafe URL, attempt to transform it, or start generation.
 - Do not claim that a URL is public merely because it uses HTTPS. The hosted
   service remains responsible for DNS resolution, redirect validation, and
-  SSRF protections. A filename or local attachment is not a public URL; do not
-  upload a user's file to an external host without authorization.
+  SSRF protections. A filename or local attachment is not a public URL.
+
+## Use a file from the user's machine
+
+When the user asks to process a video, audio, or subtitle file that is on
+their machine, upload it with `create_upload_url` instead of asking for a link.
+
+- Upload only a file the user named for this request, and only to the
+  `upload_url` that `create_upload_url` returns. Never upload a user's file to
+  any other host, and never upload files the user did not ask to process.
+- `create_upload_url` is free. Pass the file's name and its exact size in
+  bytes, then send the raw bytes with one HTTP PUT whose length equals that
+  size, for example `curl -T <path> "<upload_url>"`. Use the returned
+  `file_url` wherever a tool takes a URL. A `file_url` returned by this tool
+  already satisfies the URL rules above.
+- Accepted types are common video and audio containers and `.srt` / `.vtt`.
+  The size limit is `max_upload_size_mb` from `get_account_services`. Report
+  a rejected type, size, or hourly upload limit as the service states it.
+- `upload_url` is a short-lived credential: do not show it to the user or
+  reuse it. `file_url` is the link to keep, and an upload is a temporary
+  working file, not storage.
+- If you cannot read the file or cannot run the upload in this environment,
+  say so and ask for a public HTTPS link. Do not claim an upload succeeded
+  unless the PUT returned 200.
 
 ## Choose the operation
 
 Generation and processing tools run only when the user clearly asks to create
 or process media. They may consume existing account credits. Read-only account
-and task lookups do not. Explain options without generating anything when the
+and task lookups do not, and neither does `create_upload_url`. Explain options without generating anything when the
 user asks what Sonilo can do. Do not require redundant confirmation for an
 explicit, sufficiently specified generation request.
 
@@ -67,12 +90,13 @@ explicit, sufficiently specified generation request.
 | Music and sound effects together, delivered as audio | `video_to_sound` |
 | A new video with music and sound effects together | `video_to_video_sound` |
 | Lower existing music under a separate voice track | `audio_ducking` |
-| Editable translated subtitles before dubbing | `proofread` |
+| Editable translated subtitles before dubbing | `generate_video_subtitles` |
 | A dubbed video per requested language | `dubbing` |
 | A creative brief for a video | `analyze_video` (also potentially charged) |
 | Cash balance, available services, and trial counts | `get_account_services` |
 | Historical usage and spend | `get_usage` |
 | Progress or results of an existing task | `get_generation_task` |
+| A usable link for a file on the user's machine | `create_upload_url` |
 
 Use video-producing tools for a new video with the generated audio mixed in;
 do not substitute them for an audio-only request. Prefer a single combined
