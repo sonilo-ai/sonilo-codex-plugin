@@ -46,7 +46,34 @@ user-supplied video, audio, and subtitle URL.
 - Do not claim that a URL is public merely because it uses HTTPS. The hosted
   service remains responsible for DNS resolution, redirect validation, and
   SSRF protections. A filename or local attachment is not a public URL; do not
-  upload a user's file to an external host without authorization.
+  upload a user's file to a third-party host to obtain one. The only supported
+  upload path is the one below.
+
+## Use a local file
+
+When the user asks to process a file on their own machine, use the hosted
+`create_upload_url` tool if it is among the connected tools and this
+environment can send the file's bytes in an HTTP PUT.
+
+1. Proceed only when the request clearly covers that file, and say that the
+   file will be uploaded to temporary storage on the user's Sonilo Platform
+   account. Do not upload files the user did not name.
+2. Call `create_upload_url` with the file's name and its exact size in bytes.
+   It is free and creates no task. It accepts video, audio, `.srt`, and `.vtt`
+   files up to `max_upload_size_mb` from `get_account_services`.
+3. Send the raw bytes to the returned `upload_url` with one HTTP PUT, for
+   example `curl -T <path> "<upload_url>"`, adding no authorization header.
+   A 403 means the size did not match or the URL expired: request a new URL
+   instead of retrying the old one.
+4. Once the PUT succeeds, pass the returned `file_url` wherever the chosen
+   tool takes a media or subtitle URL. A `file_url` from this tool is a valid
+   input; do not ask for a public URL in its place.
+
+Treat `upload_url` as a credential for that one upload: never show it to the
+user, log it, or reuse it. Do not present `file_url` as a result or download
+link; uploads are temporary working files. If the tool is not connected or
+the PUT cannot be made here, do not try another upload route: explain that a
+public `https://` URL is needed instead.
 
 ## Choose the operation
 
@@ -73,6 +100,7 @@ explicit, sufficiently specified generation request.
 | Cash balance, available services, and trial counts | `get_account_services` |
 | Historical usage and spend | `get_usage` |
 | Progress or results of an existing task | `get_generation_task` |
+| Make a local video, audio, or subtitle file usable as an input | `create_upload_url` (free; see Use a local file) |
 
 Use video-producing tools for a new video with the generated audio mixed in;
 do not substitute them for an audio-only request. Prefer a single combined

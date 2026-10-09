@@ -82,7 +82,10 @@ feature reference, but its local-file and playback tools are not bundled here.
 - "What is my cash balance, and how many free text-to-music runs remain?"
 
 Use real public HTTPS media URLs in place of the labels above. A local file
-or attachment is not a hosted media URL. The plugin returns actual result
+or attachment is not a hosted media URL: when the hosted `create_upload_url`
+tool is available and Codex can run the upload, the plugin uploads a file you
+name to temporary storage on your Sonilo Platform account and uses the link it
+gets back; otherwise it asks for a public HTTPS URL. The plugin returns actual result
 links for previews, subtitles, videos, variants, and stems.
 
 ### Account status and continuation
