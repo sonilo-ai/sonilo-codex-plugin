@@ -1,8 +1,57 @@
 # Revision 1.2.0 draft notes
 
-> Status — October 9, 2026: prepared locally on `codex/plugin-v1.2.0`. Not
-> committed, packaged, uploaded, or submitted. Version 1.1.0 is still in
-> review and has not been cancelled.
+> Status — November 18, 2026: OpenAI rejected 1.1.0 on October 21, 2026
+> (see "Response to the 1.1.0 rejection" below). This draft now also carries
+> the fixes for that rejection. Not packaged, uploaded, or submitted.
+> Version 1.0.0 remains published.
+
+## Response to the 1.1.0 rejection
+
+The rejection email (openai-review → dev@sonilo.com, October 21) gave two
+reasons and no further detail:
+
+1. The plugin "appears to enable or facilitate commerce for disallowed
+   offerings (e.g., digital goods/services or other prohibited categories)."
+2. The "plugin name or description did not meet our quality standards."
+
+What 1.1.0 added over the approved 1.0.0, and the likely triggers:
+
+- After a credit rejection the skill linked the localized "Balance and free
+  trials" guide (`/usage-and-entitlements`). That page carries View pricing
+  and View billing buttons to `/pricing` and `/dashboard/billing`, so the
+  plugin routed users from an out-of-credit error straight to a purchase.
+  `docs/REVISION_1.1.0_NOTES.md` had already flagged this link as unconfirmed.
+- The listing promoted "check your USD balance and free trials", "existing
+  account funds", and a free dubbing preview followed by the paid full video.
+- The long description was long and read like terms of use.
+
+Changes in this draft:
+
+- `plugin.json`: long description rewritten (567 characters, was about 1,000)
+  around what the plugin makes; no balance, funds, trial, or preview wording.
+  Capability "Cash balance, trial allowance and usage reporting" is now
+  "Usage reporting", as in 1.0.0.
+- Skill: the balance guide and all ten of its links are removed. Credit
+  errors carry no links, prices, or purchase steps. The balance is reported
+  only when the user asks. No pitching of paid follow-ups; the full-video
+  price from `trial_preview` is quoted only on request. Skill metadata no
+  longer advertises balances.
+- `scripts/check_release.py`: the guide-link checks are replaced by guards
+  that fail if guidance links `/usage-and-entitlements`, `/pricing`, or
+  `/dashboard/billing`, or if the listing or capabilities use commerce words.
+  Checked against the 1.1.0 manifest and reference: both fail.
+- `docs/LISTING_COPY_1.2.0.json`: new English copy and nine translations
+  (drafted by Claude, not natively reviewed).
+
+Not fixed here (hosted server, `sonilo-api-dashboard`):
+
+- `backend/app/services/dubbing_trial.py` puts "Translating the full video
+  costs $X — add funds at <billing URL>" in `trial_preview.message`, and the
+  402 hints say "or add funds to …". Reviewers testing the hosted MCP in
+  ChatGPT see tool output directly, without this skill's suppression rules.
+- On November 17 the daily MCP scan held a new `dubbing` tool definition
+  ("needs further review before it can be published"); the earlier
+  definition stays live. The portal offers "Request manual review".
 
 ## Why
 
@@ -71,8 +120,13 @@ desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
 ## Before submitting
 
-- The long description changed. The nine portal translations and
-  `docs/LISTING_COPY_1.1.0.json` still carry the old sentence.
+- Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
+  translations, and the capability list. Have the translations checked.
+- Decide on the hosted server's add-funds messages (above) before
+  resubmitting; the listing fix alone does not cover what reviewers see in
+  ChatGPT.
+- Reviewer notes in the portal still mention the pricing/billing-link
+  disclosure from 1.1.0; replace it with a short note on what changed.
 - The portal's tool justifications were written for the 15 tools of 1.1.0.
   They need entries for `generate_video_subtitles` and `create_upload_url`,
   and the `proofread` entry removed.

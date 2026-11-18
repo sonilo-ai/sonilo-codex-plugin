@@ -25,11 +25,11 @@ MCP_URL = "https://api.sonilo.com/mcp"
 RESOURCE_METADATA_URL = f"{MCP_URL}/.well-known/oauth-protected-resource"
 RFC_RESOURCE_METADATA_URL = "https://api.sonilo.com/.well-known/oauth-protected-resource/mcp"
 AUTHORIZATION_SERVER = "https://clerk.platform.sonilo.com/"
-BALANCE_GUIDE_PATH = WORKFLOW_SKILL_PATH.parent / "references" / "account-and-links.md"
-BALANCE_GUIDE_URLS = {
-    f"https://platform.sonilo.com{prefix}/usage-and-entitlements"
-    for prefix in ("", "/zh", "/zh-HK", "/de", "/es", "/fr", "/it", "/ja", "/ko", "/pt")
-}
+# OpenAI rejected 1.1.0 (October 21, 2026) for facilitating commerce in digital
+# goods. These pages carry View pricing / View billing / Add funds buttons, so
+# no shipped guidance may link them, and the listing copy stays free of money talk.
+PURCHASE_PATHS = ("usage-and-entitlements", "platform.sonilo.com/pricing", "dashboard/billing")
+LISTING_COMMERCE_TERMS = ("balance", "fund", "free trial", "usd", "pricing", "credit", "billing", "purchase")
 PAID_TOOL_NAMES = {
     "text_to_music",
     "text_to_sfx",
@@ -213,7 +213,15 @@ def check_local() -> None:
         "newly mixed videos" in interface.get("longDescription", ""),
         "long description must describe the video-to-video workflows",
     )
+    long_description = interface.get("longDescription", "").lower()
+    for term in LISTING_COMMERCE_TERMS:
+        require(term not in long_description, f"long description must not mention {term!r}")
     capabilities = set(interface.get("capabilities", []))
+    for capability in capabilities:
+        require(
+            not any(term in capability.lower() for term in LISTING_COMMERCE_TERMS),
+            f"capability {capability!r} reads as commerce",
+        )
     require("Video soundtrack generation" in capabilities, "video soundtrack capability is missing")
     require("Video sound-effect generation" in capabilities, "video sound-effect capability is missing")
     expected_urls = {
@@ -318,15 +326,14 @@ def check_local() -> None:
         "to visit a website,\n  account, billing, or pricing page" in guidance,
         "skill must not indirectly route users to purchase destinations",
     )
-    guide_reference = BALANCE_GUIDE_PATH.read_text(encoding="utf-8")
-    guide_urls = set(re.findall(
-        r"https://platform\.sonilo\.com[^\s|)]*/usage-and-entitlements[^\s|)]*",
-        guide_reference,
-    ))
+    for path in PURCHASE_PATHS:
+        require(path not in guidance, f"guidance must not link a purchase page ({path})")
     require(
-        guide_urls == BALANCE_GUIDE_URLS,
-        "balance guide must configure all 10 published routes without query data or invented paths",
+        "Do not add links, prices, purchase steps, or suggestions to add funds" in guidance,
+        "credit errors must stay free of links and purchase prompts",
     )
+    skill_description = skill.split("\n---\n", 1)[0]
+    require("balance" not in skill_description.lower(), "skill metadata must not advertise balances")
     require("Poll `get_generation_task`" in skill, "skill must document asynchronous polling")
     agent_metadata = WORKFLOW_AGENT_PATH.read_text(encoding="utf-8")
     require('value: "sonilo_platform"' in agent_metadata, "skill dependency must match the hosted MCP server name")
@@ -391,14 +398,6 @@ def check_live() -> None:
     for field in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
         status, _, _ = request(interface[field])
         require(status == 200, f"{field} returned {status}, expected 200")
-
-    for url in sorted(BALANCE_GUIDE_URLS):
-        status, headers, body = request(url)
-        require(status == 200, f"balance guide {url} returned {status}, expected 200")
-        require("text/html" in headers.get("content-type", ""), f"guide is not HTML: {url}")
-        html = body.decode("utf-8")
-        canonical = re.search(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', html)
-        require(canonical is not None and canonical[1] == url, f"wrong guide canonical: {url}")
 
 
 def main() -> int:

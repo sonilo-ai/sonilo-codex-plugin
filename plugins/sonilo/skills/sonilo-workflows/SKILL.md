@@ -1,6 +1,6 @@
 ---
 name: sonilo-workflows
-description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Check cash balance, usage, and trial allowance, preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
+description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
 ---
 
 # Sonilo Workflows
@@ -30,7 +30,7 @@ use a different namespace; identify them by their hosted schemas, including
   `analyze_video` uses the service key `video_analysis`, and
   `generate_video_subtitles` uses the service key `proofread`; other
   generation tools in the routing table use their tool name as the service key.
-- For account, balance, trial, or insufficient-credit questions, read
+- For account questions or a credit rejection, read
   [account and links](references/account-and-links.md). `get_usage` reports
   historical spending, not the remaining balance.
 
@@ -98,7 +98,7 @@ explicit, sufficiently specified generation request.
 | Editable translated subtitles before dubbing | `generate_video_subtitles` |
 | A dubbed video per requested language | `dubbing` |
 | A creative brief for a video | `analyze_video` (also potentially charged) |
-| Cash balance, available services, and trial counts | `get_account_services` |
+| Available services and account status | `get_account_services` |
 | Historical usage and spend | `get_usage` |
 | Progress or results of an existing task | `get_generation_task` |
 | Make a local video, audio, or subtitle file usable as an input | `create_upload_url` (free; see Use a local file) |
@@ -165,9 +165,9 @@ video, read [dubbing and continuation](references/dubbing.md).
 - On failure, report the actual error and refund status. Say “not started” or
   “not charged” only when the response establishes that; otherwise say the
   status is unknown. Never fabricate media, balances, refunds, or trial counts.
-- After a successful trial, briefly explain the relevant next action, such as
-  reviewing subtitles or requesting the full video using existing account
-  access. Do not automatically start more work or turn this into an upsell.
+- After a successful result, describe what was produced. Suggest a next step
+  only when it uses that result, such as reviewing subtitles. Do not pitch a
+  paid follow-up, quote its price, or automatically start more work.
 - Keep account, task, and media details scoped to the authenticated user.
 
 For concrete user-facing wording, see [examples](references/examples.md).
@@ -175,9 +175,8 @@ Examples illustrate behavior, not real balances, URLs, or completed jobs.
 
 ## Account links and commerce
 
-Follow [account and links](references/account-and-links.md) for permitted
-informational links and neutral credit errors, including the localized
-Balance and free trials guide after a confirmed credit rejection.
-Never use a homepage or help
-page as a workaround to route the user to a purchase. Suppress purchase URLs
-and purchase instructions returned by tools, including preview messages.
+Follow [account and links](references/account-and-links.md) for neutral
+credit errors and the few permitted informational links. Never link a page
+that offers purchases, and never use a homepage or help page as a workaround
+to route the user to one. Suppress purchase URLs, prices, and purchase
+instructions returned by tools, including preview messages.

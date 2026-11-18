@@ -1,5 +1,12 @@
 # v1.1.0 verification — October 2–3, 2026 (Pacific)
 
+> Review outcome — October 21, 2026: OpenAI rejected v1.1.0 (email from openai-review to dev@sonilo.com; the portal shows only “Changes required”). Reasons given: the plugin “appears to enable or facilitate commerce for disallowed offerings (e.g., digital goods/services…)”, and the “plugin name or description did not meet our quality standards.” v1.0.0 stays published and publicly listed. No appeal was sent. The fix is tracked in `docs/REVISION_1.2.0_NOTES.md`. The status notes below are superseded.
+
+> Submission update — October 5, 2026: user confirmed the six policy attestations at submission time. OpenAI Platform returned “Sonilo submitted for review”; the review version is read-only. v1.1.0 is awaiting a decision, not approved or published. This supersedes earlier pending-submission notes.
+
+> Current status — October 5, 2026: submission preparation completed, with disclosed review risks. Final demo: https://cdn.sonilo.com/review/sonilo-v1.1.0-review-final-20261005.mp4 (217 seconds). It includes a newly submitted three-variant/stems music job, same-task retrieval, actual output audio, and an additional completed-task walkthrough. It is a ChatGPT web hosted-MCP recording, not a Codex skill recording or proof of every case on every client. The web run needed one follow-up to provide stem links, without regeneration. Reviewer balance after recording: USD 5.4491; dubbing trial remains exhausted. Portal reviewer notes were updated while retaining sign-in credentials and the pricing/billing-link disclosure. Legal attestations are unchecked; not submitted or published. Historical entries below are retained as dated evidence, not current blockers.
+
+
 **Release status: hosted fixes, media verification, desktop connection, and refusal checks passed. Updated recording and review submission remain.**
 
 Backend [PR #393](https://github.com/sonilo-ai/sonilo-api-dashboard/pull/393)

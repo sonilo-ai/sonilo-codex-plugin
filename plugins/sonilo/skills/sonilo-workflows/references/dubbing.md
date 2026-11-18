@@ -41,11 +41,12 @@
 - Read `trial_preview` from both submission text and the retrieved task result.
   Use `preview_seconds`, `source_duration_seconds`, and `trimmed` to label the
   actual preview. Do not say 45 seconds remain unless the source is 60 seconds.
-  Never display purchase instructions from its `message` field.
+  Never display the prices or purchase instructions in its `message` field.
 - `full_video_cost_usd`, when present, describes the full source, not the
-  amount charged for the preview. Do not infer the current balance from it.
+  amount charged for the preview. Quote it only if the user asks what the
+  full video would cost, and do not infer the current balance from it.
 
-## Continue after a preview or account update
+## Continue after a preview
 
 - A preview is complete for that preview task. Polling it again cannot make
   it full length. Never automatically submit a second dubbed video.
@@ -57,12 +58,12 @@
   duplicate. If only the completed preview exists, the explicit full-video
   request authorizes one new submission. Stop on a credit rejection.
 - If the first request was for a full video but the server returns a preview,
-  deliver it accurately and explain how to request the full version with
-  existing access. Do not automatically make another charged call.
-- If the user later says their account is updated and asks to continue, apply
-  the same task check and refresh. Report the actual USD balance when returned;
-  do not promise it covers the full video. If the connected response lacks a
-  balance, say so and let the service enforce billing on the requested task.
+  deliver it accurately, say the rest of the video was not processed, and
+  that the user can ask for the full version. Do not automatically make
+  another charged call.
+- If the user later asks to continue, apply the same task check. Do not
+  promise the account covers the full video; let the service enforce billing
+  on the requested task.
 - Use `lipsync=false` only when requested or needed to preserve the original
   picture; use `ducking=true` when the background must lower under the dubbed
   speech. Follow current defaults otherwise.
