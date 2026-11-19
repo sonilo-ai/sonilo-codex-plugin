@@ -43,15 +43,21 @@ Changes in this draft:
 - `docs/LISTING_COPY_1.2.0.json`: new English copy and nine translations
   (drafted by Claude, not natively reviewed).
 
-Not fixed here (hosted server, `sonilo-api-dashboard`):
+Hosted server (`sonilo-api-dashboard` PR #475, merged as `4a5f3a4a`,
+deployed to `backend-mcp` task definition `:135` on November 18, 2026):
 
-- `backend/app/services/dubbing_trial.py` puts "Translating the full video
-  costs $X — add funds at <billing URL>" in `trial_preview.message`, and the
-  402 hints say "or add funds to …". Reviewers testing the hosted MCP in
-  ChatGPT see tool output directly, without this skill's suppression rules.
-- On November 17 the daily MCP scan held a new `dubbing` tool definition
-  ("needs further review before it can be published"); the earlier
-  definition stays live. The portal offers "Request manual review".
+- The dubbing preview message ("Translating the full video costs $X — add
+  funds at <billing URL>"), the `trial_exhausted` 402 with the billing link,
+  and the "or add funds" hints no longer reach ChatGPT or Codex. The server
+  decides by the MCP handshake name: `openai-mcp` (ChatGPT),
+  `openai-mcp (Codex)`, `codex-mcp-client`, and any unidentified MCP client
+  get no purchase prompt; REST and other MCP clients are unchanged.
+- Covered by end-to-end tests through the real MCP transport. Not yet
+  checked by hand in ChatGPT or Codex.
+- The `dubbing` tool description changed with it ("says what the preview
+  covered"). The daily MCP scan held the previous `dubbing` change on
+  November 17 and will hold this one too; the earlier definition stays live
+  until a manual review passes.
 
 ## Why
 
@@ -122,9 +128,11 @@ desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
 - Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
   translations, and the capability list. Have the translations checked.
-- Decide on the hosted server's add-funds messages (above) before
-  resubmitting; the listing fix alone does not cover what reviewers see in
-  ChatGPT.
+- Get the held `dubbing` tool definition reviewed (Rescan, then "Request
+  manual review" in the MCPs tab).
+- Check in ChatGPT and Codex, with Claude as the control, using an account
+  with zero balance: a dubbing request after the trial is used shows no
+  billing link; a free preview shows no price or "add funds".
 - Reviewer notes in the portal still mention the pricing/billing-link
   disclosure from 1.1.0; replace it with a short note on what changed.
 - The portal's tool justifications were written for the 15 tools of 1.1.0.
