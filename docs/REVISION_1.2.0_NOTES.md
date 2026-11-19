@@ -162,6 +162,26 @@ call for an unsafe URL.
 Not validated: a complete run through to a delivered result, the Codex
 desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
+## Portal draft (November 19, 2026)
+
+Created the 1.2.0 draft with "Create draft from ZIP" from
+`dist/sonilo-1.2.0.zip`, built by `scripts/build_release.py`. The upload now
+rejects three things the 1.1.0 package carried or lacked, fixed in that order:
+
+1. `.mcp.json` `scopes` ("App setup does not support these MCP settings"),
+   and then any auth setting at all ("This app already has authentication
+   configured. Remove the ZIP's auth override"). The portal package keeps
+   only `type` and `url`; the existing app connection is reused.
+2. Manifest `name` must be the package name
+   `app-6a56e50ff2788191a96c7c8cd84bb6c2`; the portal package is rewritten,
+   the repository keeps `sonilo` for local Codex installs.
+3. "Support URL is required": added `interface.supportURL`
+   (https://platform.sonilo.com), uploaded again with "Upload new version".
+
+State after the last upload: review status "Not submitted", metadata
+checks pass, description, capabilities and all four listing URLs show the
+1.2.0 values. The skill scan was still running.
+
 ## Before submitting
 
 - Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
