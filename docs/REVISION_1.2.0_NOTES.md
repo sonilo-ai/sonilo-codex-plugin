@@ -27,7 +27,7 @@ What 1.1.0 added over the approved 1.0.0, and the likely triggers:
 
 Changes in this draft:
 
-- `plugin.json`: long description rewritten (567 characters, was about 1,000)
+- `plugin.json`: long description rewritten (567 characters; the 1.1.0 portal copy was 818)
   around what the plugin makes; no balance, funds, trial, or preview wording.
   Capability "Cash balance, trial allowance and usage reporting" is now
   "Usage reporting", as in 1.0.0.
