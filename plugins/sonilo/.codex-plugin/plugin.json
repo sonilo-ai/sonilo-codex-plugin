@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Sonilo",
     "shortDescription": "Music, sound effects & dubbing",
-    "longDescription": "Create licensed music, sound effects, and multilingual dubbing for your videos with Sonilo.\n\n• Generate music from a description or matched to a video, with several options and separate instrument tracks.\n• Get back newly mixed videos with music and sound effects added, keeping speech clear.\n• Translate a video's subtitles, review them, then create a dubbed version in other languages.\n\nWork from public video links or files on your computer; files are uploaded to Sonilo for processing. Requires a Sonilo Platform account. Sonilo.com creator accounts are separate.",
+    "longDescription": "Create licensed music, sound effects, and multilingual dubbing for your videos with Sonilo.\n\n• Generate music from a description or matched to a video, with several options and separate instrument tracks.\n• Get back newly mixed videos with music and sound effects added, keeping speech clear.\n• Translate a video's subtitles with your names and terms kept intact, review them, then create a dubbed version in other languages.\n\nWork from public video links or files on your computer; files are uploaded to Sonilo for processing. Requires a Sonilo Platform account. Sonilo.com creator accounts are separate.",
     "developerName": "Sonilo",
     "category": "Creativity",
     "capabilities": [
@@ -35,7 +35,7 @@
       "Combined music and sound effects",
       "Audio ducking",
       "Music variants and stems",
-      "Subtitle review and dubbing",
+      "Subtitle review, glossary and dubbing",
       "Usage reporting",
       "Generation-task retrieval"
     ],

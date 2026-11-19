@@ -3,7 +3,8 @@
 ## Review the script before dubbing
 
 1. For “translate the subtitles first; I will correct them,” use
-   `generate_video_subtitles` only. Its availability and trial allowance are
+   `generate_video_subtitles` only, with the glossary below when the user
+   names terms to keep. Its availability and trial allowance are
    listed under the service key `proofread`. It may consume credits; it
    produces SRT files, not a dubbed video.
    Check that the service is available before submitting.
@@ -12,7 +13,8 @@
    unless the service says so. Wait for the user's review before dubbing.
 3. Use the approved target-language scripts as `dubbing.subtitles`, one public
    HTTPS SRT/VTT URL per target language, with keys matching the requested
-   languages exactly. Validate every subtitle URL as well as the video URL.
+   languages exactly. Pass the same glossary again, with any aliases.
+   Validate every subtitle URL as well as the video URL.
    If the user edits text in chat, do not silently reuse the unedited SRT:
    obtain a reachable URL for the approved script before submission. An
    edited `.srt` or `.vtt` saved on the user's machine can be uploaded with
@@ -20,6 +22,41 @@
 4. Set `export_srt=true` only if the user wants aligned subtitles with the
    dubbed result and scripts were supplied. Deliver each language's video
    and any successful subtitle export; report a blocked export separately.
+
+## Keep names and terms right (glossary)
+
+Use a glossary when the user names people, brands, products, or terms that
+must stay as written in translation, or must be pronounced a certain way in
+the dub. Include only terms the user gave or confirmed; do not invent them.
+
+- `generate_video_subtitles.glossary` is a list such as
+  `[{"term": "Sonilo"}]`. Each term is kept exactly as written in every
+  translation. Add `"language"` to limit an entry to one target language,
+  and `"translation"` together with `"language"` to write the term a
+  specific way in that language, for example
+  `{"term": "Thom", "language": "zh_cn", "translation": "汤姆"}`.
+- `dubbing.glossary` works only together with `dubbing.subtitles`, the
+  approved scripts. Pass the same list and add `"alias"` where the voice
+  should say a term differently, for example
+  `{"term": "SQL", "alias": "sequel"}`. The returned subtitles keep the
+  script's wording; only the spoken audio uses the alias.
+- Without approved scripts, do not send a glossary to `dubbing`. Offer the
+  subtitle-review flow below, which applies the glossary to the translation
+  first.
+- Follow each tool's schema for the glossary's type; do not copy parameter
+  types from the local MCP server.
+
+## Input limits
+
+- `generate_video_subtitles`: up to 300 seconds, and the video needs an
+  audio track. Pass `source_language` only when the user says which
+  language is spoken or detection got it wrong; otherwise omit it.
+- `dubbing`: up to 300 seconds, a file of at most 400 MB, and a shorter
+  side of at least 360 px. The video URL must use https.
+- When the user has already said the video breaks a limit (for example, a
+  10-minute video), explain the limit before calling a tool. Otherwise
+  report the service's refusal as returned; say “not charged” only when the
+  response establishes it.
 
 ## Select languages and preview eligibility
 

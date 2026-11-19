@@ -326,6 +326,20 @@ def check_local() -> None:
         "to visit a website,\n  account, billing, or pricing page" in guidance,
         "skill must not indirectly route users to purchase destinations",
     )
+    # Hosted MCP features the skill must explain (see sonilo-api-dashboard
+    # app/mcp_server.py), and parameters that exist only on the REST API or
+    # behind a production-off flag, which the skill must not suggest.
+    require(
+        "`dubbing.glossary` works only together with `dubbing.subtitles`" in guidance,
+        "guidance must say a dubbing glossary needs approved scripts",
+    )
+    require("`generate_video_subtitles.glossary`" in guidance, "guidance must cover the subtitle glossary")
+    require("`source_language`" in guidance, "guidance must cover the subtitle source_language hint")
+    require("(`mode` = `music`, `sfx`, or `both`" in skill, "skill must cover analyze_video modes")
+    for limit in ("up to 300 seconds", "at most 400 MB", "at least 360 px"):
+        require(limit in guidance, f"guidance must state the input limit: {limit}")
+    for name in ("audio_ref_url", "cover_ref_url", "detect_speakers", "detect_emotions", "export_stems"):
+        require(name not in guidance, f"guidance must not suggest {name}, which the hosted MCP does not offer")
     for path in PURCHASE_PATHS:
         require(path not in guidance, f"guidance must not link a purchase page ({path})")
     require(

@@ -1,6 +1,6 @@
 ---
 name: sonilo-workflows
-description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
+description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Preserve speech, request variants or stems, keep names and terms intact with a glossary, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
 ---
 
 # Sonilo Workflows
@@ -97,7 +97,7 @@ explicit, sufficiently specified generation request.
 | Lower existing music under a separate voice track | `audio_ducking` |
 | Editable translated subtitles before dubbing | `generate_video_subtitles` |
 | A dubbed video per requested language | `dubbing` |
-| A creative brief for a video | `analyze_video` (also potentially charged) |
+| A creative brief for a video | `analyze_video` (also potentially charged; `mode` picks the brief) |
 | Available services and account status | `get_account_services` |
 | Historical usage and spend | `get_usage` |
 | Progress or results of an existing task | `get_generation_task` |
@@ -130,12 +130,16 @@ Do not add a paid analysis step just to choose a generation tool.
   times; represent gaps as intervals requesting no added effects. Do not send
   isolated disjoint intervals or use the music-segment schema. Combined tools
   have their own segment schema; inspect it before use.
+- **Analysis:** `analyze_video` writes a music brief, a sound-design brief,
+  or both (`mode` = `music`, `sfx`, or `both`, the default). Every mode
+  costs the same; ask for only the brief the user wants.
 - Preserve requested duration, language, and format; otherwise use tool
   defaults. Ask only for missing information that affects the requested
   result or charge, and do not invent parameters or prices.
 
-For subtitle review, dubbing, free previews, and returning to finish a full
-video, read [dubbing and continuation](references/dubbing.md).
+For subtitle review, glossaries, input limits, dubbing, free previews, and
+returning to finish a full video, read
+[dubbing and continuation](references/dubbing.md).
 
 ## Run or retrieve a task
 

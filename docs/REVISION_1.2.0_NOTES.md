@@ -84,6 +84,32 @@ Two hosted tool changes landed after 1.1.0 was submitted:
   so the package in review does not contain it. This draft builds on that
   guidance and does not replace it.
 
+## Hosted features added to the skill (November 19, 2026)
+
+Compared against `app/mcp_server.py` on `sonilo-api-dashboard` `develop`
+(`97283e57`), the tools offer these, which the skill did not explain:
+
+- `glossary` on `generate_video_subtitles` (terms kept as written, optional
+  per-language translation) and on `dubbing` (same list plus `alias` for
+  pronunciation; only together with `subtitles`). Added to
+  `references/dubbing.md` and two examples.
+- `source_language` on `generate_video_subtitles`.
+- `analyze_video` `mode` (`music`, `sfx`, `both`; same price).
+- Input limits: subtitles up to 300 s with an audio track; dubbing up to
+  300 s, 400 MB, shorter side at least 360 px.
+
+Left out on purpose: `audio_ref_url` / `cover_ref_url` on `text_to_music`
+(behind `T2M_REF_PARAMS_ENABLED`, off in production), and dubbing stems,
+speaker or emotion detection, acting directions and custom voices (REST
+only; the hosted tools have no such parameters). `check_release.py` fails if
+the skill mentions those parameters or drops the glossary, source language,
+mode or limit guidance.
+
+Listing: the third bullet now mentions keeping names and terms; capability
+"Subtitle review and dubbing" is now "Subtitle review, glossary and
+dubbing". `docs/LISTING_COPY_1.2.0.json` carries the updated English (605
+characters) and nine translations.
+
 ## Release notes
 
 Subtitle review before dubbing now uses the hosted `generate_video_subtitles`

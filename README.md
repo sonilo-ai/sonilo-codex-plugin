@@ -62,6 +62,8 @@ shows only the old tools, restart the app before starting a new conversation.
 - Place sound effects at specified times
 - Duck music under voice audio
 - Review translated subtitles before dubbing into the requested languages
+- Keep names and terms intact in translations, and set how the dub pronounces them, with a glossary
+- Ask for a music brief, a sound-design brief, or both for a video
 - Use a video, audio, or subtitle file from your computer by uploading it to Sonilo
 - Use an eligible account's 15-second dubbing preview, then request a full video
 - Check available account services and historical usage
@@ -80,6 +82,7 @@ bundled here; local files go through the hosted upload tool instead.
 - "Give me three music choices for this 30-second café ad: `<public HTTPS video URL>`"
 - "Generate 30 seconds of jazz with separate drums and bass tracks."
 - "Translate this video into English subtitles first. I will correct the product names before dubbing: `<public HTTPS video URL>`"
+- "Translate this demo into Japanese subtitles and keep the name Sonilo as written: `<public HTTPS video URL>`"
 - "Let me try English dubbing for free: `<public HTTPS video URL>`"
 - "Add music to `~/Videos/launch.mp4` and give me the finished video."
 - "Is the English dubbing task from earlier finished?"
