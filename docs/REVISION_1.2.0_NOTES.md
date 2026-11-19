@@ -1,9 +1,12 @@
 # Revision 1.2.0 draft notes
 
-> Status — November 18, 2026: OpenAI rejected 1.1.0 on October 21, 2026
-> (see "Response to the 1.1.0 rejection" below). This draft now also carries
-> the fixes for that rejection. Not packaged, uploaded, or submitted.
-> Version 1.0.0 remains published.
+> Status — November 19, 2026: 1.2.0 submitted for review on the OpenAI
+> Platform ("Version 1.2.0 · In review", estimated completion November 20,
+> 2026). It carries the fixes for the October 21 rejection of 1.1.0 (see
+> "Response to the 1.1.0 rejection" below). Version 1.0.0 remains published.
+> The six policy attestations were ticked on the user's instruction, the
+> same six the user confirmed for 1.1.0; the review-private "Additional
+> Submission Context" note is recorded under "Submission" below.
 
 ## Response to the 1.1.0 rejection
 
@@ -219,3 +222,33 @@ translations do not yet change what the directory shows. Uploaded again with
   be refused; that behaviour changed.
 - Record one end-to-end local-file run before claiming the feature in review
   notes.
+
+## Submission (November 19, 2026)
+
+Submitted the 1.2.0 draft (package built from `4a37181`; no findings,
+skill scan passed). Additional Submission Context, as entered:
+
+> 1.2.0 responds to the rejection of 1.1.0 (October 21, 2026):
+>
+> 1. Commerce. 1.1.0 linked a balance guide whose page carried pricing and
+> billing buttons, and the listing promoted balance, funds and a free preview
+> of a paid result. 1.2.0 removes all of that: the skill links no pricing,
+> billing or balance pages, explains credit errors without links or purchase
+> steps, and reports a balance only when the user asks. On the server,
+> responses to ChatGPT and Codex no longer contain billing links, "add funds"
+> prompts, or the price of a full video after a free preview. The related
+> tool updates were approved on appeal on November 18.
+> 2. Name and description. The description is rewritten to say what the
+> plugin makes, without terms-of-use style disclaimers (605 characters, down
+> from 818).
+>
+> New in 1.2.0: files the user names on their computer are uploaded to
+> Sonilo through the hosted create_upload_url tool; subtitle translation uses
+> generate_video_subtitles; a glossary keeps names and terms intact in
+> subtitles and dubbing; analyze_video can return a music brief, a
+> sound-design brief, or both.
+
+During review: keep `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` off, avoid tool
+definition changes, and watch dev@sonilo.com for the decision. Approval and
+publication may be separate steps.
+
