@@ -128,8 +128,11 @@ desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
 - Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
   translations, and the capability list. Have the translations checked.
-- Get the held `dubbing` tool definition reviewed (Rescan, then "Request
-  manual review" in the MCPs tab).
+- Held `dubbing` tool definition: rescanned and appeal submitted on
+  November 18, 2026 (new `glossary` parameter, documented 400 MB / 360 px
+  limits, preview wording). MCP scans stay paused until OpenAI decides;
+  withdraw the appeal from the MCPs tab if another tool change must publish
+  first.
 - Check in ChatGPT and Codex, with Claude as the control, using an account
   with zero balance: a dubbing request after the trial is used shows no
   billing link; a free preview shows no price or "add funds".
