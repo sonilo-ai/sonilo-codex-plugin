@@ -1,0 +1,40 @@
+{
+  "status": "Draft for 1.2.0, November 19, 2026. Rewritten after the 1.1.0 rejection of October 21, 2026 (commerce; description quality); third bullet now mentions the glossary. Not yet entered in the portal. Translations were drafted by Claude and have not had native review.",
+  "english": "Create licensed music, sound effects, and multilingual dubbing for your videos with Sonilo.\n\n• Generate music from a description or matched to a video, with several options and separate instrument tracks.\n• Get back newly mixed videos with music and sound effects added, keeping speech clear.\n• Translate a video's subtitles with your names and terms kept intact, review them, then create a dubbed version in other languages.\n\nWork from public video links or files on your computer; files are uploaded to Sonilo for processing. Requires a Sonilo Platform account. Sonilo.com creator accounts are separate.",
+  "firstPrompt": "Create three 10-second jazz music options with separate drums and bass tracks.",
+  "capabilities": [
+    "Music generation",
+    "Sound-effect generation",
+    "Video soundtrack generation",
+    "Video sound-effect generation",
+    "Combined music and sound effects",
+    "Audio ducking",
+    "Music variants and stems",
+    "Subtitle review, glossary and dubbing",
+    "Usage reporting",
+    "Generation-task retrieval"
+  ],
+  "translations": {
+    "de": "Erstelle mit Sonilo lizenzierte Musik, Soundeffekte und mehrsprachige Synchronisationen für deine Videos.\n\n• Erzeuge Musik aus einer Beschreibung oder passend zu einem Video – mit mehreren Varianten und separaten Instrumentenspuren.\n• Erhalte neu abgemischte Videos mit Musik und Soundeffekten, bei denen Sprache klar verständlich bleibt.\n• Übersetze die Untertitel eines Videos, wobei deine Namen und Begriffe erhalten bleiben, prüfe sie und erstelle dann eine synchronisierte Fassung in anderen Sprachen.\n\nNutze öffentliche Videolinks oder Dateien auf deinem Computer; Dateien werden zur Verarbeitung zu Sonilo hochgeladen. Ein Sonilo Platform-Konto ist erforderlich. Sonilo.com-Creator-Konten sind separat.",
+    "es": "Crea música con licencia, efectos de sonido y doblaje en varios idiomas para tus videos con Sonilo.\n\n• Genera música a partir de una descripción o adaptada a un video, con varias opciones y pistas de instrumentos separadas.\n• Obtén videos nuevos con música y efectos de sonido mezclados, manteniendo las voces claras.\n• Traduce los subtítulos de un video conservando tus nombres y términos, revísalos y luego crea una versión doblada en otros idiomas.\n\nUsa enlaces públicos de video o archivos de tu computadora; los archivos se suben a Sonilo para procesarlos. Requiere una cuenta de Sonilo Platform. Las cuentas de creadores de Sonilo.com son independientes.",
+    "fr": "Créez avec Sonilo de la musique sous licence, des effets sonores et des doublages multilingues pour vos vidéos.\n\n• Générez de la musique à partir d’une description ou adaptée à une vidéo, avec plusieurs propositions et des pistes instrumentales séparées.\n• Recevez de nouvelles vidéos mixées avec musique et effets sonores, tout en gardant les voix claires.\n• Traduisez les sous-titres d’une vidéo en conservant vos noms et termes, relisez-les, puis créez une version doublée dans d’autres langues.\n\nUtilisez des liens vidéo publics ou des fichiers de votre ordinateur ; les fichiers sont envoyés à Sonilo pour traitement. Un compte Sonilo Platform est requis. Les comptes créateurs Sonilo.com sont distincts.",
+    "it": "Crea con Sonilo musica con licenza, effetti sonori e doppiaggi multilingue per i tuoi video.\n\n• Genera musica da una descrizione o abbinata a un video, con più proposte e tracce strumentali separate.\n• Ottieni nuovi video mixati con musica ed effetti sonori, mantenendo le voci chiare.\n• Traduci i sottotitoli di un video mantenendo i tuoi nomi e termini, rivedili e poi crea una versione doppiata in altre lingue.\n\nUsa link video pubblici o file sul tuo computer; i file vengono caricati su Sonilo per l’elaborazione. È necessario un account Sonilo Platform. Gli account creator Sonilo.com sono separati.",
+    "ja": "Soniloで、動画向けのライセンス済み音楽、効果音、多言語の吹き替えを作成できます。\n\n• テキストの説明から、または動画に合わせて音楽を生成。複数の案と楽器別トラックも取得できます。\n• 音楽と効果音を加えた新しい動画を作成し、声は聞き取りやすく保ちます。\n• 名前や用語を指定どおりに残して動画の字幕を翻訳・確認してから、他の言語の吹き替え版を作成できます。\n\n公開動画リンクまたはお使いのコンピューター上のファイルを利用できます。ファイルは処理のためSoniloにアップロードされます。Sonilo Platformアカウントが必要です。Sonilo.comのクリエイターアカウントは別です。",
+    "ko": "Sonilo로 동영상에 사용할 라이선스 음악, 음향 효과, 다국어 더빙을 만드세요.\n\n• 텍스트 설명이나 동영상에 맞춰 음악을 생성하고, 여러 버전과 악기별 트랙을 받으세요.\n• 음악과 음향 효과를 더한 새 동영상을 받고, 음성은 선명하게 유지하세요.\n• 이름과 용어는 그대로 유지하며 동영상 자막을 번역하고 검토한 다음 다른 언어로 더빙된 버전을 만드세요.\n\n공개 동영상 링크나 컴퓨터에 있는 파일을 사용할 수 있으며, 파일은 처리를 위해 Sonilo에 업로드됩니다. Sonilo Platform 계정이 필요합니다. Sonilo.com 크리에이터 계정은 별도입니다.",
+    "zh": "用 Sonilo 为你的视频制作已获授权的音乐、音效和多语言配音。\n\n• 根据文字描述或视频内容生成音乐，可同时获得多个方案和独立乐器分轨。\n• 获得加入音乐和音效的新视频，同时保持人声清晰。\n• 先翻译并检查视频字幕，人名和术语按你的要求保留，再生成其他语言的配音版本。\n\n可使用公开视频链接或电脑上的文件；文件会上传到 Sonilo 进行处理。需要 Sonilo Platform 账户。Sonilo.com 创作者账户与 Platform 账户分开。",
+    "zh-HK": "用 Sonilo 為你的影片製作已獲授權的音樂、音效和多語言配音。\n\n• 根據文字描述或影片內容生成音樂，可同時取得多個方案和獨立樂器分軌。\n• 取得加入音樂和音效的新影片，同時保持人聲清晰。\n• 先翻譯並檢查影片字幕，人名和術語按你的要求保留，再生成其他語言的配音版本。\n\n可使用公開影片連結或電腦上的檔案；檔案會上載到 Sonilo 進行處理。需要 Sonilo Platform 帳戶。Sonilo.com 創作者帳戶與 Platform 帳戶分開。",
+    "pt": "Crie música licenciada, efeitos sonoros e dobragens em vários idiomas para os seus vídeos com o Sonilo.\n\n• Gere música a partir de uma descrição ou adaptada a um vídeo, com várias opções e pistas de instrumentos separadas.\n• Receba novos vídeos com música e efeitos sonoros misturados, mantendo as vozes claras.\n• Traduza as legendas de um vídeo mantendo os seus nomes e termos, reveja-as e depois crie uma versão dobrada noutros idiomas.\n\nUtilize ligações públicas de vídeo ou ficheiros do seu computador; os ficheiros são carregados para o Sonilo para processamento. É necessária uma conta Sonilo Platform. As contas de criadores do Sonilo.com são separadas."
+  },
+  "websiteLocales": [
+    "en",
+    "de",
+    "es",
+    "fr",
+    "it",
+    "zh",
+    "zh-HK",
+    "ja",
+    "ko",
+    "pt"
+  ]
+}

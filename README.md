@@ -62,13 +62,17 @@ shows only the old tools, restart the app before starting a new conversation.
 - Place sound effects at specified times
 - Duck music under voice audio
 - Review translated subtitles before dubbing into the requested languages
+- Keep names and terms intact in translations, and set how the dub pronounces them, with a glossary
+- Ask for a music brief, a sound-design brief, or both for a video
+- Use a video, audio, or subtitle file from your computer by uploading it to Sonilo
 - Use an eligible account's 15-second dubbing preview, then request a full video
-- Inspect current USD cash balance, account services, trial allowance, and historical usage
+- Check available account services and historical usage
 - Retrieve an existing generation after waiting or a timeout without resubmission
 
 Features depend on the connected hosted tool schemas and account access. The
 [Sonilo MCP repository](https://github.com/sonilo-ai/sonilo-mcp) is a useful
-feature reference, but its local-file and playback tools are not bundled here.
+feature reference, but its file-path parameters and playback tools are not
+bundled here; local files go through the hosted upload tool instead.
 
 ### Example prompts
 
@@ -78,34 +82,33 @@ feature reference, but its local-file and playback tools are not bundled here.
 - "Give me three music choices for this 30-second café ad: `<public HTTPS video URL>`"
 - "Generate 30 seconds of jazz with separate drums and bass tracks."
 - "Translate this video into English subtitles first. I will correct the product names before dubbing: `<public HTTPS video URL>`"
+- "Translate this demo into Japanese subtitles and keep the name Sonilo as written: `<public HTTPS video URL>`"
 - "Let me try English dubbing for free: `<public HTTPS video URL>`"
-- "What is my cash balance, and how many free text-to-music runs remain?"
+- "Add music to `~/Videos/launch.mp4` and give me the finished video."
+- "Is the English dubbing task from earlier finished?"
 
 Use real public HTTPS media URLs in place of the labels above. A local file
-or attachment is not a hosted media URL. The plugin returns actual result
+or attachment is not a hosted media URL: when the hosted `create_upload_url`
+tool is available and Codex can run the upload, the plugin uploads a file you
+name to temporary storage on your Sonilo Platform account and uses the link it
+gets back; otherwise it asks for a public HTTPS URL. The plugin returns actual result
 links for previews, subtitles, videos, variants, and stems.
 
 ### Account status and continuation
 
-The plugin reads the current USD cash balance and service-specific trial
-allowance from `get_account_services`. Historical spending comes from
-`get_usage` and is not used as a balance. A missing balance is reported as
-unavailable; zero cash alone does not rule out trials or invoiced billing.
-The balance is a query-time snapshot, not a guarantee that the next generation
-can run. Credit errors are explained without purchase links, and generation
-is not retried automatically.
+The plugin checks available services and trial allowance with
+`get_account_services` before new work, and reports the cash balance only when
+you ask for it. Historical spending comes from `get_usage` and is not used as
+a balance.
 
-After a preview or confirmed credit rejection, ask to continue with the same
-video. The plugin checks current services and retrieves any existing task
-before submitting new work. A full video after a preview is a new generation
-of the original source, not a free extension of the preview task.
+Credit errors are explained in plain terms, with no links, prices, or purchase
+steps, and generation is not retried automatically. Purchases are not
+available through the plugin.
 
-Credit rejections now include the published
-[Balance and free trials](https://platform.sonilo.com/usage-and-entitlements)
-guide in the user's language (10 supported languages; English fallback).
-The plugin explains the error and keeps known inputs for a user-requested
-continuation. See the [1.1.0 implementation notes](docs/IMPLEMENTATION_1.1.0.md)
-for service dependencies and the guide's pending directory-review assessment.
+After a preview or a rejected request, ask to continue with the same video.
+The plugin retrieves any existing task before submitting new work. A full
+video after a preview is a new generation of the original source, not a free
+extension of the preview task.
 
 ## Billing
 
@@ -114,7 +117,7 @@ existing account credits. Available free runs depend on the service and
 account; dubbing previews require one target language and no supplied script.
 Multiple music variants and multi-language dubbing can cost more. Account and usage
 tools (`get_account_services`, `get_usage`, `get_generation_task`) are
-read-only and never incur a charge. Paid tools run only after you explicitly
+read-only and never incur a charge. Uploading a file is also free. Paid tools run only after you explicitly
 ask for them.
 
 ## What this plugin connects to
@@ -125,10 +128,13 @@ hosted endpoint:
 - **Endpoint:** `https://api.sonilo.com/mcp` (HTTPS, Streamable HTTP MCP)
 - **Authorization server:** Sonilo's Clerk instance (OAuth 2.1 + PKCE; the
   plugin registers dynamically — no pre-shared client secret)
-- **Data sent:** your prompts and any media URLs you provide to a tool
+- **Data sent:** your prompts, any media URLs you provide to a tool, and any
+  local file you ask the plugin to process, which is uploaded to Sonilo as a
+  temporary working file
 - **Data stored:** the OAuth token, kept locally per user by Codex
 
-No local command or binary is executed by this plugin.
+The plugin bundles no local command or binary. Uploading a local file uses
+an HTTP PUT that Codex runs in your environment when you ask for it.
 
 ## Support
 

@@ -25,11 +25,11 @@ MCP_URL = "https://api.sonilo.com/mcp"
 RESOURCE_METADATA_URL = f"{MCP_URL}/.well-known/oauth-protected-resource"
 RFC_RESOURCE_METADATA_URL = "https://api.sonilo.com/.well-known/oauth-protected-resource/mcp"
 AUTHORIZATION_SERVER = "https://clerk.platform.sonilo.com/"
-BALANCE_GUIDE_PATH = WORKFLOW_SKILL_PATH.parent / "references" / "account-and-links.md"
-BALANCE_GUIDE_URLS = {
-    f"https://platform.sonilo.com{prefix}/usage-and-entitlements"
-    for prefix in ("", "/zh", "/zh-HK", "/de", "/es", "/fr", "/it", "/ja", "/ko", "/pt")
-}
+# OpenAI rejected 1.1.0 (October 21, 2026) for facilitating commerce in digital
+# goods. These pages carry View pricing / View billing / Add funds buttons, so
+# no shipped guidance may link them, and the listing copy stays free of money talk.
+PURCHASE_PATHS = ("usage-and-entitlements", "platform.sonilo.com/pricing", "dashboard/billing")
+LISTING_COMMERCE_TERMS = ("balance", "fund", "free trial", "usd", "pricing", "credit", "billing", "purchase")
 PAID_TOOL_NAMES = {
     "text_to_music",
     "text_to_sfx",
@@ -40,7 +40,7 @@ PAID_TOOL_NAMES = {
     "audio_ducking",
     "video_to_sound",
     "video_to_video_sound",
-    "proofread",
+    "generate_video_subtitles",
     "dubbing",
     "analyze_video",
 }
@@ -175,6 +175,9 @@ def check_local() -> None:
     sonilo_mcp = servers["sonilo_platform"]
     require(sonilo_mcp.get("type") == "http", "MCP transport type must be http")
     require(sonilo_mcp.get("url") == MCP_URL, f"MCP URL must be {MCP_URL}")
+    # Local Codex installs read this file as is. The OpenAI Platform package
+    # drops "scopes" (scripts/build_release.py): the portal app already has
+    # its OAuth connection and rejects any auth setting in the ZIP.
     require(sonilo_mcp.get("scopes") == ["profile"], "MCP OAuth scope must be limited to profile")
     require(
         set(sonilo_mcp) == {"type", "url", "scopes"},
@@ -213,11 +216,22 @@ def check_local() -> None:
         "newly mixed videos" in interface.get("longDescription", ""),
         "long description must describe the video-to-video workflows",
     )
+    long_description = interface.get("longDescription", "").lower()
+    for term in LISTING_COMMERCE_TERMS:
+        require(term not in long_description, f"long description must not mention {term!r}")
     capabilities = set(interface.get("capabilities", []))
+    for capability in capabilities:
+        require(
+            not any(term in capability.lower() for term in LISTING_COMMERCE_TERMS),
+            f"capability {capability!r} reads as commerce",
+        )
     require("Video soundtrack generation" in capabilities, "video soundtrack capability is missing")
     require("Video sound-effect generation" in capabilities, "video sound-effect capability is missing")
     expected_urls = {
         "websiteURL": "https://platform.sonilo.com",
+        # All four listing URLs are required for a public MCP listing; homepage
+        # and author.url do not fill them (developers.openai.com/plugins/deploy/submission).
+        "supportURL": "https://platform.sonilo.com",
         "privacyPolicyURL": "https://sonilo.com/privacy-policy",
         "termsOfServiceURL": "https://sonilo.com/terms-of-service",
     }
@@ -282,6 +296,30 @@ def check_local() -> None:
         "Do not call even a read-only Sonilo tool" in skill,
         "skill must reject unsafe media URLs without account lookups",
     )
+    # `proofread` survives only as the service key that get_account_services
+    # reports; the hosted server no longer lists a tool by that name.
+    require(
+        "| `proofread` |" not in guidance and "use `proofread`" not in guidance
+        and "Run `proofread`" not in guidance,
+        "guidance must not route to the retired proofread tool name",
+    )
+    require(
+        "uses the service key `proofread`" in skill,
+        "skill must map generate_video_subtitles to its proofread service key",
+    )
+    require("`create_upload_url`" in skill, "skill is missing local-file upload guidance")
+    require(
+        "upload a user's file to a third-party host" in skill,
+        "skill must confine local-file uploads to Sonilo's upload URL",
+    )
+    require(
+        "never show it to the\nuser" in skill,
+        "skill must keep the one-time upload URL out of replies",
+    )
+    require(
+        "do not try another upload route" in skill,
+        "skill must fall back to a public link when an upload cannot run",
+    )
     require(
         "Do not provide or direct users to pricing, checkout, subscription, credit" in guidance,
         "skill must not direct users to purchase or recharge",
@@ -294,15 +332,28 @@ def check_local() -> None:
         "to visit a website,\n  account, billing, or pricing page" in guidance,
         "skill must not indirectly route users to purchase destinations",
     )
-    guide_reference = BALANCE_GUIDE_PATH.read_text(encoding="utf-8")
-    guide_urls = set(re.findall(
-        r"https://platform\.sonilo\.com[^\s|)]*/usage-and-entitlements[^\s|)]*",
-        guide_reference,
-    ))
+    # Hosted MCP features the skill must explain (see sonilo-api-dashboard
+    # app/mcp_server.py), and parameters that exist only on the REST API or
+    # behind a production-off flag, which the skill must not suggest.
     require(
-        guide_urls == BALANCE_GUIDE_URLS,
-        "balance guide must configure all 10 published routes without query data or invented paths",
+        "`dubbing.glossary` works only together with `dubbing.subtitles`" in guidance,
+        "guidance must say a dubbing glossary needs approved scripts",
     )
+    require("`generate_video_subtitles.glossary`" in guidance, "guidance must cover the subtitle glossary")
+    require("`source_language`" in guidance, "guidance must cover the subtitle source_language hint")
+    require("(`mode` = `music`, `sfx`, or `both`" in skill, "skill must cover analyze_video modes")
+    for limit in ("up to 300 seconds", "at most 400 MB", "at least 360 px"):
+        require(limit in guidance, f"guidance must state the input limit: {limit}")
+    for name in ("audio_ref_url", "cover_ref_url", "detect_speakers", "detect_emotions", "export_stems"):
+        require(name not in guidance, f"guidance must not suggest {name}, which the hosted MCP does not offer")
+    for path in PURCHASE_PATHS:
+        require(path not in guidance, f"guidance must not link a purchase page ({path})")
+    require(
+        "Do not add links, prices, purchase steps, or suggestions to add funds" in guidance,
+        "credit errors must stay free of links and purchase prompts",
+    )
+    skill_description = skill.split("\n---\n", 1)[0]
+    require("balance" not in skill_description.lower(), "skill metadata must not advertise balances")
     require("Poll `get_generation_task`" in skill, "skill must document asynchronous polling")
     agent_metadata = WORKFLOW_AGENT_PATH.read_text(encoding="utf-8")
     require('value: "sonilo_platform"' in agent_metadata, "skill dependency must match the hosted MCP server name")
@@ -367,14 +418,6 @@ def check_live() -> None:
     for field in ("websiteURL", "privacyPolicyURL", "termsOfServiceURL"):
         status, _, _ = request(interface[field])
         require(status == 200, f"{field} returned {status}, expected 200")
-
-    for url in sorted(BALANCE_GUIDE_URLS):
-        status, headers, body = request(url)
-        require(status == 200, f"balance guide {url} returned {status}, expected 200")
-        require("text/html" in headers.get("content-type", ""), f"guide is not HTML: {url}")
-        html = body.decode("utf-8")
-        canonical = re.search(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', html)
-        require(canonical is not None and canonical[1] == url, f"wrong guide canonical: {url}")
 
 
 def main() -> int:

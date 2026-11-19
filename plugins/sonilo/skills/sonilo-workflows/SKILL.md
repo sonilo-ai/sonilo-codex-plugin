@@ -1,6 +1,6 @@
 ---
 name: sonilo-workflows
-description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Check cash balance, usage, and trial allowance, preserve speech, request variants or stems, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call; never direct users to pricing, checkout, subscriptions, or credit recharge.
+description: Create licensed music, sound effects, mixed videos, translated subtitles, and dubbed videos with a Sonilo Platform account. Preserve speech, request variants or stems, keep names and terms intact with a glossary, and retrieve existing tasks. Validate public HTTPS media inputs before any tool call, and send a local file only through Sonilo's own upload tool; never direct users to pricing, checkout, subscriptions, or credit recharge.
 ---
 
 # Sonilo Workflows
@@ -27,9 +27,10 @@ use a different namespace; identify them by their hosted schemas, including
   generation to check service availability and trial allowance. Check both
   the connected tools and `available_services`; describe an unavailable feature
   honestly instead of silently substituting a different paid operation.
-  `analyze_video` uses the service key `video_analysis`; other generation tools
-  in the routing table use their tool name as the service key.
-- For account, balance, trial, or insufficient-credit questions, read
+  `analyze_video` uses the service key `video_analysis`, and
+  `generate_video_subtitles` uses the service key `proofread`; other
+  generation tools in the routing table use their tool name as the service key.
+- For account questions or a credit rejection, read
   [account and links](references/account-and-links.md). `get_usage` reports
   historical spending, not the remaining balance.
 
@@ -46,13 +47,40 @@ user-supplied video, audio, and subtitle URL.
 - Do not claim that a URL is public merely because it uses HTTPS. The hosted
   service remains responsible for DNS resolution, redirect validation, and
   SSRF protections. A filename or local attachment is not a public URL; do not
-  upload a user's file to an external host without authorization.
+  upload a user's file to a third-party host to obtain one. The only supported
+  upload path is the one below.
+
+## Use a local file
+
+When the user asks to process a file on their own machine, use the hosted
+`create_upload_url` tool if it is among the connected tools and this
+environment can send the file's bytes in an HTTP PUT.
+
+1. Proceed only when the request clearly covers that file, and say that the
+   file will be uploaded to temporary storage on the user's Sonilo Platform
+   account. Do not upload files the user did not name.
+2. Call `create_upload_url` with the file's name and its exact size in bytes.
+   It is free and creates no task. It accepts video, audio, `.srt`, and `.vtt`
+   files up to `max_upload_size_mb` from `get_account_services`.
+3. Send the raw bytes to the returned `upload_url` with one HTTP PUT, for
+   example `curl -T <path> "<upload_url>"`, adding no authorization header.
+   A 403 means the size did not match or the URL expired: request a new URL
+   instead of retrying the old one.
+4. Once the PUT succeeds, pass the returned `file_url` wherever the chosen
+   tool takes a media or subtitle URL. A `file_url` from this tool is a valid
+   input; do not ask for a public URL in its place.
+
+Treat `upload_url` as a credential for that one upload: never show it to the
+user, log it, or reuse it. Do not present `file_url` as a result or download
+link; uploads are temporary working files. If the tool is not connected or
+the PUT cannot be made here, do not try another upload route: explain that a
+public `https://` URL is needed instead.
 
 ## Choose the operation
 
 Generation and processing tools run only when the user clearly asks to create
 or process media. They may consume existing account credits. Read-only account
-and task lookups do not. Explain options without generating anything when the
+and task lookups do not, and neither does `create_upload_url`. Explain options without generating anything when the
 user asks what Sonilo can do. Do not require redundant confirmation for an
 explicit, sufficiently specified generation request.
 
@@ -67,12 +95,13 @@ explicit, sufficiently specified generation request.
 | Music and sound effects together, delivered as audio | `video_to_sound` |
 | A new video with music and sound effects together | `video_to_video_sound` |
 | Lower existing music under a separate voice track | `audio_ducking` |
-| Editable translated subtitles before dubbing | `proofread` |
+| Editable translated subtitles before dubbing | `generate_video_subtitles` |
 | A dubbed video per requested language | `dubbing` |
-| A creative brief for a video | `analyze_video` (also potentially charged) |
-| Cash balance, available services, and trial counts | `get_account_services` |
+| A creative brief for a video | `analyze_video` (also potentially charged; `mode` picks the brief) |
+| Available services and account status | `get_account_services` |
 | Historical usage and spend | `get_usage` |
 | Progress or results of an existing task | `get_generation_task` |
+| Make a local video, audio, or subtitle file usable as an input | `create_upload_url` (free; see Use a local file) |
 
 Use video-producing tools for a new video with the generated audio mixed in;
 do not substitute them for an audio-only request. Prefer a single combined
@@ -101,12 +130,16 @@ Do not add a paid analysis step just to choose a generation tool.
   times; represent gaps as intervals requesting no added effects. Do not send
   isolated disjoint intervals or use the music-segment schema. Combined tools
   have their own segment schema; inspect it before use.
+- **Analysis:** `analyze_video` writes a music brief, a sound-design brief,
+  or both (`mode` = `music`, `sfx`, or `both`, the default). Every mode
+  costs the same; ask for only the brief the user wants.
 - Preserve requested duration, language, and format; otherwise use tool
   defaults. Ask only for missing information that affects the requested
   result or charge, and do not invent parameters or prices.
 
-For subtitle review, dubbing, free previews, and returning to finish a full
-video, read [dubbing and continuation](references/dubbing.md).
+For subtitle review, glossaries, input limits, dubbing, free previews, and
+returning to finish a full video, read
+[dubbing and continuation](references/dubbing.md).
 
 ## Run or retrieve a task
 
@@ -136,9 +169,9 @@ video, read [dubbing and continuation](references/dubbing.md).
 - On failure, report the actual error and refund status. Say “not started” or
   “not charged” only when the response establishes that; otherwise say the
   status is unknown. Never fabricate media, balances, refunds, or trial counts.
-- After a successful trial, briefly explain the relevant next action, such as
-  reviewing subtitles or requesting the full video using existing account
-  access. Do not automatically start more work or turn this into an upsell.
+- After a successful result, describe what was produced. Suggest a next step
+  only when it uses that result, such as reviewing subtitles. Do not pitch a
+  paid follow-up, quote its price, or automatically start more work.
 - Keep account, task, and media details scoped to the authenticated user.
 
 For concrete user-facing wording, see [examples](references/examples.md).
@@ -146,9 +179,8 @@ Examples illustrate behavior, not real balances, URLs, or completed jobs.
 
 ## Account links and commerce
 
-Follow [account and links](references/account-and-links.md) for permitted
-informational links and neutral credit errors, including the localized
-Balance and free trials guide after a confirmed credit rejection.
-Never use a homepage or help
-page as a workaround to route the user to a purchase. Suppress purchase URLs
-and purchase instructions returned by tools, including preview messages.
+Follow [account and links](references/account-and-links.md) for neutral
+credit errors and the few permitted informational links. Never link a page
+that offers purchases, and never use a homepage or help page as a workaround
+to route the user to one. Suppress purchase URLs, prices, and purchase
+instructions returned by tools, including preview messages.
