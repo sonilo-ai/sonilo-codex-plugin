@@ -52,8 +52,20 @@ deployed to `backend-mcp` task definition `:135` on November 18, 2026):
   decides by the MCP handshake name: `openai-mcp` (ChatGPT),
   `openai-mcp (Codex)`, `codex-mcp-client`, and any unidentified MCP client
   get no purchase prompt; REST and other MCP clients are unchanged.
-- Covered by end-to-end tests through the real MCP transport. Not yet
-  checked by hand in ChatGPT or Codex.
+- Covered by end-to-end tests through the real MCP transport.
+- Checked by hand in ChatGPT web on November 18, 2026 (zero-balance
+  prepay account; ChatGPT identified itself as `openai-mcp (Codex)`):
+  a free Spanish preview of `tests/fixtures/speech-demo.mp4` returned
+  "Free preview: the first 15 seconds of your 22-second video, in 1
+  language. The rest of the video was not translated." (task `798e7e62…`,
+  no charge); the follow-up full-length request was refused with "You've
+  used your 1 free 15-second video translation preview." (no link, no task,
+  no charge). Codex with the plugin's bundled MCP config
+  (`codex-mcp-client`) was not checked by hand.
+- ChatGPT still quoted `trial_preview.full_video_cost_usd` unprompted
+  ("$1.28"). PR #476 (`0edf4feb`, task definition `:136`) makes the field
+  optional in `get_generation_task`'s output schema and adds
+  `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` (default True: nothing changes yet).
 - The `dubbing` tool description changed with it ("says what the preview
   covered"). The daily MCP scan held the previous `dubbing` change on
   November 17 and will hold this one too; the earlier definition stays live
@@ -128,14 +140,15 @@ desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
 - Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
   translations, and the capability list. Have the translations checked.
-- Held `dubbing` tool definition: rescanned and appeal submitted on
-  November 18, 2026 (new `glossary` parameter, documented 400 MB / 360 px
-  limits, preview wording). MCP scans stay paused until OpenAI decides;
-  withdraw the appeal from the MCPs tab if another tool change must publish
-  first.
-- Check in ChatGPT and Codex, with Claude as the control, using an account
-  with zero balance: a dubbing request after the trial is used shows no
-  billing link; a free preview shows no price or "add funds".
+- Held tool definitions: after #476 the first appeal was withdrawn and one
+  appeal submitted for `dubbing` (new `glossary` parameter, documented
+  400 MB / 360 px limits, preview wording) and `get_generation_task`
+  (`full_video_cost_usd` optional). MCP scans stay paused until OpenAI
+  decides; withdraw the appeal from the MCPs tab if another tool change must
+  publish first.
+- Once both are published: set `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` to
+  False in `sonilo-api-dashboard` and deploy `backend-mcp`, so ChatGPT and
+  Codex stop receiving the full-video price.
 - Reviewer notes in the portal still mention the pricing/billing-link
   disclosure from 1.1.0; replace it with a short note on what changed.
 - The portal's tool justifications were written for the 15 tools of 1.1.0.
