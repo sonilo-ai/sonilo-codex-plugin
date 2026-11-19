@@ -140,15 +140,14 @@ desktop app, ChatGPT web, the packaged ZIP, and the portal Skill scan.
 
 - Enter `docs/LISTING_COPY_1.2.0.json` in the portal: English, nine
   translations, and the capability list. Have the translations checked.
-- Held tool definitions: after #476 the first appeal was withdrawn and one
-  appeal submitted for `dubbing` (new `glossary` parameter, documented
-  400 MB / 360 px limits, preview wording) and `get_generation_task`
-  (`full_video_cost_usd` optional). MCP scans stay paused until OpenAI
-  decides; withdraw the appeal from the MCPs tab if another tool change must
-  publish first.
-- Once both are published: set `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` to
-  False in `sonilo-api-dashboard` and deploy `backend-mcp`, so ChatGPT and
-  Codex stop receiving the full-video price.
+- Tool definitions: one appeal for `dubbing` (new `glossary` parameter,
+  documented 400 MB / 360 px limits, preview wording) and
+  `get_generation_task` (`full_video_cost_usd` optional) was approved on
+  November 18, 2026; both are published and scans run again.
+- PR #477 (`97283e57`, task definition `:137`, November 19) turned
+  `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` off. Checked in ChatGPT: reading
+  task `798e7e62…` returns `trial_preview` with five fields and no
+  `full_video_cost_usd`. Setting it True is the rollback.
 - Reviewer notes in the portal still mention the pricing/billing-link
   disclosure from 1.1.0; replace it with a short note on what changed.
 - The portal's tool justifications were written for the 15 tools of 1.1.0.
