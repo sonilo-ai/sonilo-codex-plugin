@@ -175,6 +175,9 @@ def check_local() -> None:
     sonilo_mcp = servers["sonilo_platform"]
     require(sonilo_mcp.get("type") == "http", "MCP transport type must be http")
     require(sonilo_mcp.get("url") == MCP_URL, f"MCP URL must be {MCP_URL}")
+    # Local Codex installs read this file as is. The OpenAI Platform package
+    # drops "scopes" (scripts/build_release.py): the portal app already has
+    # its OAuth connection and rejects any auth setting in the ZIP.
     require(sonilo_mcp.get("scopes") == ["profile"], "MCP OAuth scope must be limited to profile")
     require(
         set(sonilo_mcp) == {"type", "url", "scopes"},
@@ -226,6 +229,9 @@ def check_local() -> None:
     require("Video sound-effect generation" in capabilities, "video sound-effect capability is missing")
     expected_urls = {
         "websiteURL": "https://platform.sonilo.com",
+        # All four listing URLs are required for a public MCP listing; homepage
+        # and author.url do not fill them (developers.openai.com/plugins/deploy/submission).
+        "supportURL": "https://platform.sonilo.com",
         "privacyPolicyURL": "https://sonilo.com/privacy-policy",
         "termsOfServiceURL": "https://sonilo.com/terms-of-service",
     }
