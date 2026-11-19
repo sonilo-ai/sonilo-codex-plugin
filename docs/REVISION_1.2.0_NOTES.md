@@ -178,9 +178,23 @@ rejects three things the 1.1.0 package carried or lacked, fixed in that order:
 3. "Support URL is required": added `interface.supportURL`
    (https://platform.sonilo.com), uploaded again with "Upload new version".
 
-State after the last upload: review status "Not submitted", metadata
-checks pass, description, capabilities and all four listing URLs show the
-1.2.0 values. The skill scan was still running.
+State after the third upload: review status "Not submitted", metadata
+checks pass, the skill scan passes ("No findings with the plugin's metadata
+and skills").
+
+The "Submit for review" dialog (opened and cancelled, nothing ticked) has
+only the six policy attestations and an optional, review-private
+"Additional Submission Context" note. Tools are reviewed separately on the
+MCPs tab (already published after the November 18 appeal), so this review
+covers the listing and the skill; no test cases, demo URL or reviewer
+credentials are asked for here.
+
+Added to the manifest under `extensions["com.openai"].publication`:
+`release_notes` and the nine translated descriptions (locale keys de-DE,
+es-419, fr-FR, it-IT, ja-JP, ko-KR, pt-PT, zh-CN, zh-HK, from
+`docs/LISTING_COPY_1.2.0.json`). Per the submission docs, imported
+translations do not yet change what the directory shows. Uploaded again with
+"Upload new version".
 
 ## Before submitting
 
