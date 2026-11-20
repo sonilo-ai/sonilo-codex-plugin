@@ -1,12 +1,14 @@
 # Revision 1.2.0 draft notes
 
-> Status — November 19, 2026: 1.2.0 submitted for review on the OpenAI
-> Platform ("Version 1.2.0 · In review", estimated completion November 20,
-> 2026). It carries the fixes for the October 21 rejection of 1.1.0 (see
-> "Response to the 1.1.0 rejection" below). Version 1.0.0 remains published.
-> The six policy attestations were ticked on the user's instruction, the
-> same six the user confirmed for 1.1.0; the review-private "Additional
-> Submission Context" note is recorded under "Submission" below.
+> Status — November 19, 2026: **1.2.0 approved and published.** OpenAI
+> approved it the day it was submitted (email "ChatGPT Plugin Submission
+> Approved" to dev@sonilo.com, no conditions). Published from the dashboard
+> with "Publish plugin", which replaced 1.0.0: "Version 1.2.0", "Listed
+> publicly". It carries the fixes for the October 21 rejection of 1.1.0 (see
+> "Response to the 1.1.0 rejection" below). GitHub `main` is 1.2.0 (PR #4,
+> merged before the decision). The six policy attestations were ticked on
+> the user's instruction, the same six the user confirmed for 1.1.0; the
+> review-private "Additional Submission Context" note is under "Submission".
 
 ## Response to the 1.1.0 rejection
 
@@ -248,7 +250,14 @@ skill scan passed). Additional Submission Context, as entered:
 > subtitles and dubbing; analyze_video can return a music brief, a
 > sound-design brief, or both.
 
-During review: keep `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` off, avoid tool
-definition changes, and watch dev@sonilo.com for the decision. Approval and
-publication may be separate steps.
+## Approval and publication (November 19, 2026)
+
+The dashboard showed "1.2.0 · Approved" and "Ready to publish". Approval and
+publication are separate steps: "Publish plugin" asks to confirm that 1.2.0
+"will replace the currently published version 1.0.0". There is no button to
+roll back to a previous version; "Unpublish plugin" removes the listing.
+A problem in a published version is fixed by submitting a new one.
+
+Keep `MCP_PREVIEW_PRICE_TO_OPENAI_CLIENTS` off on `backend-mcp`, and route any
+user-facing billing text in MCP-shared code through `purchase_prompt_allowed`.
 
